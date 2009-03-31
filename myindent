@@ -1,0 +1,9 @@
+#!/bin/bash
+
+exec indent --k-and-r-style \
+    --tab-size 8 --indent-level 4 \
+    --line-length 150 --honour-newlines \
+    --comment-line-length 120 \
+    --dont-format-comments --no-comment-delimiters-on-blank-lines \
+    -lps \
+    "$@"

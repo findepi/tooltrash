@@ -1,0 +1,36 @@
+#!/bin/bash
+
+proc=mysqld
+declare -i tres=3 # must be 1 digit
+
+interval=0.5
+declare -i kafter=4
+declare -i sig=9
+
+list() {
+    ps xau | tr -s ' ' | cut -d ' ' -f 2,3,11 | grep $proc
+}
+
+reached() {
+    list | grep -qE " ([$tres-9]|[1-9][0-9])\.[0-9]+ "
+}
+
+while true; do
+    while ! reached; do sleep $interval; done
+    echo "Warning: treshold reached."
+
+    declare -i i=0
+    while [ $i -lt $kafter ] && reached; do
+	echo "going to kill in $[kafter - i] steps..."
+	i=$[i+1]
+	sleep $interval
+    done
+
+    if [ $i -ge $kafter ]; then
+	echo killall -$sig $proc
+	killall -$sig $proc # kill
+    else
+	echo "security restored"
+    fi
+done
+

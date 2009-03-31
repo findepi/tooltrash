@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec date --date="$1" "+%s"

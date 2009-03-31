@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ksystraycmd --hidden --tooltip 'students tunnel' -- \
+konsole --noframe --nomenubar --notoolbar --vt_sz 100x30 -T 'students tunnel' -e bash -xc '
+    while true; do
+        ssh pf219427@students.mimuw.edu.pl -R 1525:localhost:22
+        sleep 3
+    done'

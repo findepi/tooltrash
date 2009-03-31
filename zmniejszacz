@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+import sys, os.path, glob
+from PIL import Image
+
+def die_usage():
+    print >> sys.stderr, "Usage: %s LENGTHxWIDTH images..." % sys.argv[0]
+    sys.exit(1)
+
+def resize(img, target_box):
+    width, height = img.size
+
+    # rotate target_box for best fit
+    target_width, target_height = target_box
+    if (target_width < target_height) != (width < height):
+        target_width, target_height = target_height, target_width
+
+    # scale to match the target_box (like in Image.thumbnail)
+    if width > target_width: height = max(height * target_width / width, 1); width = target_width
+    if height > target_height: width = max(width * target_height / height, 1); height = target_height
+
+    if (width, height) == img.size: return img
+    img = img.resize((width, height), Image.ANTIALIAS)
+
+    return img
+
+def prefix_basename(file, prefix):
+    dirname, basename = os.path.split(file)
+    return os.path.join(dirname, prefix + basename)
+
+ext_overrides_to_png = {'jpg': 'png', 'jpeg': 'png', }
+def mini_file(file, prefix="mini-", ext_overrides = {}):
+    path, ext = os.path.splitext(file)
+    if not ext:
+        return prefix_basename(file, prefix)
+    assert ext[0] == "."
+    ext = ext[1:]
+    return prefix_basename(path + "." + ext_overrides.get(ext.lower(), ext), prefix)
+
+def main():
+    if len(sys.argv) < 2: die_usage()
+    
+    target_box = sys.argv[1].partition("x")
+    try: target_box = int(target_box[0]), int(target_box[2])
+    except: die_usage()
+
+    print >> sys.stderr, "After resize all images should fit in %dx%d box." % (target_box[0], target_box[1])
+
+    for i in sys.argv[2:]:
+        print >> sys.stderr, "Resizing %r" % i
+        img = Image.open(i)
+        img = resize(img, target_box)
+        minifile = mini_file(i)
+        print >> sys.stderr, "Writing %r" % minifile
+        img.save(minifile, quality=95) # note: optimize=True works only for PNG files.
+
+if __name__ == "__main__":
+    main()

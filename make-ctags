@@ -1,0 +1,5 @@
+#!/bin/bash
+
+find . -name tags -type l -delete
+ctags -R `pwd`
+sources | sed -e 's@/[^/]*$@@g' | sort -u | xargs -L1 sh -c 'test -d "$*" && ! test -e "$*"/tags && ln -s ../tags "$*"' o

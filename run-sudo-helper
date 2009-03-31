@@ -1,0 +1,9 @@
+#!/bin/bash
+
+command="$(basename "$0")"
+path="$(type -a "$command" | grep -E "$command is " | sed -e 's/^.* is //g' | grep -v -e "$0" | head -1)"
+
+[ "$path" != "" ] && exec sudo "$path" "$@"
+
+echo "$0: $command not found" >&2
+exit 1

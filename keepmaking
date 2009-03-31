@@ -1,0 +1,4 @@
+#!/bin/bash
+
+make="${MAKE:-fancymake}"
+exec onsourceschange bash -c 'space; "$0" "$@" && echo OK || echo finished' "$make" "$@"

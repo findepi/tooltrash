@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# An example hook script to blocks unannotated tags from entering.
+# Called by git-receive-pack with arguments: refname sha1-old sha1-new
+#
+# To enable this hook, rename this file to "update".
+#
+# Config
+# ------
+# hooks.allowunannotated
+#   This boolean sets whether unannotated tags will be allowed into the
+#   repository.  By default they won't be.
+# hooks.allowdeletetag
+#   This boolean sets whether deleting tags will be allowed in the
+#   repository.  By default they won't be.
+# hooks.allowdeletebranch
+#   This boolean sets whether deleting branches will be allowed in the
+#   repository.  By default they won't be.
+#
+
+# --- Command line
+refname="$1"
+oldrev="$2"
+newrev="$3"
+
+# --- Safety check
+if [ -z "$GIT_DIR" ]; then
+    echo "Don't run this script from the command line." >&2
+    echo " (if you want, you could supply GIT_DIR then run" >&2
+    echo "  $0 <ref> <oldrev> <newrev>)" >&2
+    exit 1
+fi
+
+if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
+    echo "Usage: $0 <ref> <oldrev> <newrev>" >&2
+    exit 1
+fi
+
+ok=true
+if [ "$newrev" != "0000000000000000000000000000000000000000" ]; then
+    if [ "$oldrev" = "0000000000000000000000000000000000000000" ]; then
+        oldrev=master
+    fi
+    for commit in `git log "$oldrev..$newrev" --pretty=format:"%H %ae" | \
+        grep -vE ' [a-zA-Z_]+\.[a-zA-Z_]+@([-a-zA-Z+]+\.)*[a-zA-Z]+\.(com|pl|net|org)' | \
+        cut -d ' '  -f 1`; do
+
+        echo "ERROR: commit $commit into $refname has invalid author."
+        git log --pretty=format:"%H %Cred%ae%Creset %s%n" -1 "$commit"
+        echo
+        ok=false
+    done
+fi
+
+# Exit with the retcode of `$ok`
+$ok

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+clear
+export NOCLEAR=1
+tag=$1; shift
+
+ext=1
+#code "^ *([a-zA-Z0-9_<>:]+[*& ]*)+\<$tag\> *\(([^()-]|\([^()-]*\))*(\)|[^=-]*)$" "$@"
+#[ $? -eq 0 ] && ext=0
+#code "^[^#/=]*(struct|enum|class|typedef|namespace|# *define|def|CREATE_CLASS)\>[^:<=/]*\<$tag\>($|[^:]).*" "$@"
+#[ $? -eq 0 ] && ext=0
+#
+#exit $ext
+
+code "^( *([a-zA-Z0-9_<>:]+[*& ]*)+\<$tag\> *\(([^()-]|\([^()-]*\))*(\)|[^=-]*)$|[^#/=]*(struct|enum|class|typedef|namespace|# *define|def|CREATE_CLASS)\>[^:<=/]*\<$tag\>($|[^:]).*)" "$@"

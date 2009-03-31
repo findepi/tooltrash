@@ -1,0 +1,47 @@
+#!/bin/bash
+
+isatty=yes
+[ "$NOCHECKTTY" = "" ] && ! test -t 1 && isatty=no
+
+sed="sed --unbuffered"
+grep="grep --line-buffered"
+
+clear=clear
+[ "$NOCLEAR" != "" ] && clear=
+
+truncatelonglines() {
+    linelimit=138
+    linelimit="$(for i in `seq 0 $linelimit`; do echo -n .; done)"
+    $sed -e "s/^\($linelimit\).\{5,\}$/\1 .../g" 
+}
+
+finalcoloring() {
+    #sed -e "s/^\([^:]*:[^:]*: \|\.\.\.\)/[01;31m[K&[m[K/g" \
+    GREP_COLORS="ms=01;31" $grep --color=always -E "^([^:]*:[^:]*: |\.\.\.)"
+    #GREP_COLORS="ms=01;32" $grep --color=always -E "$match"
+}
+
+#
+# if output is not a tty, some things make no or little sense
+#
+if [ $isatty = no ]; then
+    sed=sed
+    grep=grep
+    truncatelonglines() { cat; }
+    finalcoloring() { cat; }
+    clear=
+fi
+
+
+charlist="a-zA-Z_0-9"
+char="[$charlist]"
+notchar="[^$charlist]"
+
+
+code="$1"; shift
+match="($code)"
+$clear
+sources "${@:-.}" | xargs $grep -nwHIE "$match" \
+    | $sed -e 's/^\([^:]*:[^:]*\):/\1 : /' \
+    | truncatelonglines \
+    | finalcoloring

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+linelimit=${1:-138}
+linelimit="$(for i in `seq 0 $linelimit`; do echo -n .; done)"
+
+{
+    if [ "$NOTRIMLINES" = "" ]; then
+	sed -ue "s/^\($linelimit\).\{5,\}$/\1 .../g"
+    else
+	sed -u
+    fi
+} | \
+    awk -W interactive '{  system("echo -n `date +%Y-%m-%d\ %H-%M` \":    \""); print; }';

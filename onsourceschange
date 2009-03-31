@@ -1,0 +1,17 @@
+#!/bin/bash
+
+run() {
+    "$@"
+}
+
+run "$@"
+
+while true; do
+    if make -q sourcechanged ; then
+	# nothing has changed
+	sleep 1
+    else
+	make -s sourcechanged || exit 1
+	run "$@"
+    fi
+done

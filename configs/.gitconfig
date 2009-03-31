@@ -1,0 +1,25 @@
+[user]
+	name = Piotr Findeisen
+	email = piotr.findeisen@gmail.com
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	ui = auto
+[pack]
+	threads = 0
+[alias]
+	up = "!git update-index -q --refresh; if git diff-index --quiet --cached HEAD --ignore-submodules -- && git diff-files --quiet --ignore-submodules; then git pull --rebase; else git stash && { git pull --rebase ; git stash pop; }; fi"
+	st = status
+	ci = commit -v
+	di = diff
+	sync = "! git pull --rebase && git pu "
+	rmdeleted = "! git status | awk 'BEGIN {seen=0} { if(seen) print; } /Changed but not updated/ {seen=1} /Untracked files/ {seen=0}' | grep -E '^#[ \t]*deleted:[ \t]*' | awk '{print $3}' | xargs -r git rm"
+	co = checkout
+	br = branch
+	pu = "! br=`git branch | grep '*' | tr -d '* '`; git push origin refs/heads/$br"
+	apply-patches = am --signoff --3way --whitespace=error
+	cp = cherry-pick
+[gui]
+	fontui = -family \"nimbus sans l\" -size 12 -weight normal -slant roman -underline 0 -overstrike 0
+	diffcontext = 4

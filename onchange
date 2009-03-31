@@ -1,0 +1,36 @@
+#!/bin/bash
+
+#
+# PROGRAM reads list of files from stdin
+# at the beginning and at every change of those files it executes
+# its ARGS as a bash command
+#
+
+tmpdir="/tmp/`basename $0`-`whoami`-$$"
+
+cleanup() {
+    rm -rf "$tmpdir"
+}
+trap cleanup EXIT
+mkdir $tmpdir || exit 1
+
+makefile="$tmpdir/Makefile"
+target="$tmpdir/theychanged"
+
+echo "$target: \\" > "$makefile"
+cat | sed -e 's/^/    /g' -e 's/$/ \\/g' >> "$makefile"
+echo >> $makefile
+echo "	touch \$@" >> $makefile
+
+
+while true; do
+    if make -r -q -f "$makefile" "$target"; then
+	# is up to date
+	sleep 1.5
+
+    else
+	make -r -s -f "$makefile" "$target"
+	"$@" || true
+    fi
+done
+

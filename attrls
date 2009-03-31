@@ -1,0 +1,12 @@
+#!/bin/bash
+
+[ $# -ne 1 ] && {
+    echo "Usage: $0 <file>" >&2
+    exit 1
+}
+
+for attr in `attr "$1" -l -q`; do
+    echo $attr
+    attr "$1" -g $attr -q | hexdump -C
+    echo
+done

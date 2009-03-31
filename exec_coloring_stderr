@@ -1,0 +1,4 @@
+#!/bin/bash
+
+{ "$@" 2>&1 1>&3 | grep --line-buffered --color=always -E '^.*$' >&2; } 3>&1
+

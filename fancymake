@@ -1,0 +1,62 @@
+#!/bin/bash
+
+notchar="[^a-zA-Z0-9_]"
+fifo="${TMPDIR:-/tmp}/`basename $0`-`whoami`-$$"
+maxlinesaftererror=20
+
+nocolor() {
+    #grep --color=auto -E '^|error|warning|note|invalid|undefined reference|instantiated from' --line-buffered
+    cat
+}
+
+color() {
+    local reset="[m[K"
+    local violet="[35m[K"
+    local cyan="[36m[K"
+    local green="[32m[K"
+    local red="[01;31m[K"
+
+    sed \
+	--unbuffered \
+	-e "s/^! \w\+/$red&$reset/g" \
+	-e "s/\b\([Ee]rror\|[Ww]arning\|multiple definitions\?\|cannot find\|undefined reference\|Undefined control sequence\|invalid\)\b/$red\1$reset/g" \
+	-e "s/\b\(note\|In file included from\|instantiated from\)\b/$violet\1$reset/g"
+}
+
+test -t 1 && isatty=yes || isatty=no
+
+if test "$isatty" = "no"; then
+    coloring=nocolor
+else
+    coloring=color
+fi
+
+mkfifo -m 0600 "$fifo"
+awk -W interactive "
+	BEGIN { lines = 0; canexit = 0; maxlines = 0; doexit = 0; }
+	{
+	    if (doexit) {
+		print \"...\"
+		exit
+	    }
+	    print; lines += 1;
+	}
+	/(^|$notchar)([Ee]rror|^! .*)($notchar|$)/ {
+	    canexit = 1;
+	    if (!maxlines) { maxlines = lines + $maxlinesaftererror; }
+	}
+	{
+	    if (canexit && lines >= maxlines) {
+		doexit = 1
+	    }
+	}
+    " < "$fifo" \
+    | $coloring &
+
+make "$@" > "$fifo" 2>&1
+code=$?
+
+wait
+rm -f "$fifo"
+exit $code
+

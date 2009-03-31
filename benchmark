@@ -1,0 +1,47 @@
+#!/bin/bash
+
+declare -i times=10
+declare verbose=false
+
+if [ $# -eq 0 ]; then
+    {
+	echo "Usage: $0 [-t times] [-v] [--] program [args...]"
+        echo ""
+        echo "  Run \`program args...\' \`times\' times and report average"
+        echo "  execution time."
+        echo ""
+	echo "  Everything that is not recognized as a valid option is"
+	echo "  considered to be program [args...]."
+    } >&2
+    exit 1
+fi
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --) shift; break;;
+        -t) times="$2"; shift 2;;
+        -v) verbose=true; shift;;
+        *)
+	    break;
+    esac
+done
+
+
+if [ $times -le 0 ]; then
+    echo "times=$tmies. It's invalid." >&2
+    exit 2
+fi
+
+$verbose && { echo "Setting times to $times. Cmd: $@"; }
+
+{
+    {
+        declare -i i=0
+        while [ $i -lt $times ]; do
+            i=$[ i + 1 ]
+            $verbose && { echo "Running $@" >&3; }
+            { time -p "$@" >/dev/null 2>&4 || echo "FAILED($?)" >&4; } 2>&1
+        done
+    } | grep -E ^real | cut -d\  -f2 | average >&2
+} 3>&1 4>&2
+

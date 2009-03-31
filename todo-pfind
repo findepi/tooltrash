@@ -1,0 +1,3 @@
+#!/bin/sh
+
+todo "$@" | grep -i pfind | grep --color=auto -E '\<(TODO|FIXME|XXX)\>'

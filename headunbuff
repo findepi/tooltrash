@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 -n" >&2
+    exit
+fi
+
+declare -i lines=$1
+lines=$[ lines * -1 ]
+
+awk -W interactive "
+    BEGIN { seen = 0; }
+    {
+	if (seen < $lines) {
+	    seen += 1
+	    print
+	}
+    }
+"
