@@ -4,6 +4,8 @@ all:
 	@ echo "no sense." >&2
 	@ false
 
+postupdate:
+
 everything: clean commit sync
 
 commit:

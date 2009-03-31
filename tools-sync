@@ -1,3 +1,5 @@
-#!/bin/bash
+#!/bin/bash -e
 
-exec make -C `dirname $0` everything
+cd `dirname $0`
+make everything
+make postupdate
