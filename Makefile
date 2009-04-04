@@ -12,7 +12,8 @@ commit:
 	git update-index -q --refresh
 	if ! git diff-index --quiet --cached HEAD --ignore-submodules -- || \
 	    ! git diff-files --quiet --ignore-submodules; then \
-		git commit -am "autorecord `date "+%Y-%m-%d %H-%M"` `whoami`@`hostname`"; \
+#		git commit -am "autorecord `date "+%Y-%m-%d %H-%M"` `whoami`@`hostname`"; \
+		echo '\nERROR: You have local uncommited changes.\n' >&2; false; \
 	fi
 
 sync:
