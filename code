@@ -10,9 +10,17 @@ clear=clear
 [ "$NOCLEAR" != "" ] && clear=
 
 truncatelonglines() {
+    # Run `sed` to truncate lines using normal $LANG settings (presumably
+    # something with UTF-8?). However, this may file if file contains illegal
+    # byte sequences. In this case nothing will be truncated, so truncate once
+    # again -- this time do it byte-wise (LANG=C) but with higher limit.
+    #
+    # If you use encoding which stores characters usually on more than 1 byte,
+    # you will be unhappy.
     linelimit=138
-    linelimit="$(for i in `seq 0 $linelimit`; do echo -n .; done)"
-    $sed -e "s/^\($linelimit\).\{5,\}$/\1 .../g" 
+    clinelimit=$[2*linelimit]
+    $sed -e "s/^\(.\\{$linelimit,$linelimit\\}\).\\{5,\\}\$/\\1 .../g" | \
+        LANG=C $sed -e "s/^\(.\\{$clinelimit,$clinelimit\\}\).\\{5,\\}\$/\\1 .../g"
 }
 
 finalcoloring() {
