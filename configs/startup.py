@@ -1,5 +1,6 @@
 
 import sys, os.path, re, math, socket, hashlib
+import collections, itertools, functools
 from pprint import pprint
 
 import rlcompleter
