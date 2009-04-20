@@ -1,5 +1,5 @@
 #!/bin/bash
 
-find . -name tags -type l -delete
+find . \( -name '.*' -type d -prune \) -o \( -name tags -type l -delete \)
 ctags --exclude='*~' --exclude='*.swp' -R `pwd`
 sources | sed -e 's@/[^/]*$@@g' | sort -u | xargs -L1 sh -c 'test -d "$*" && ! test -e "$*"/tags && ln -s ../tags "$*"' o
