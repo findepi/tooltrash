@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat -n | sort -nr | sed -e 's/^[ 	]*[0-9]\+	//g'
