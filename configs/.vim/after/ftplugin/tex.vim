@@ -62,3 +62,7 @@ highlight TooLongLineEnding ctermbg=red guibg=red ctermfg=black guifg=black
 if &textwidth
     let too_long_line_ending = matchadd("TooLongLineEnding", '.\%>' . (&textwidth + 2) . 'v', -1)
 endif
+
+highlight CitationNeeded ctermbg=yellow guibg=yellow guifg=black ctermfg=black
+call matchadd("CitationNeeded", '\\cite{brak}', -1)
+
