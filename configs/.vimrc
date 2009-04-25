@@ -175,3 +175,4 @@ if filereadable(glob('~/.vimtrac'))
     source ~/.vimtrac
 endif
 
+" vim:softtabstop=2
