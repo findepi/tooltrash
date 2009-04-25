@@ -75,6 +75,8 @@ if has("autocmd")
     \   exe "normal g`\"" |
     \ endif
 
+  autocmd BufReadPost COMMIT_EDITMSG exe "normal gg"
+
   augroup END
 
 else
