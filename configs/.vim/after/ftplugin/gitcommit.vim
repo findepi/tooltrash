@@ -1,3 +1,4 @@
 
 setlocal spell
+delmarks \"
 
