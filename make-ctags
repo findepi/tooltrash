@@ -1,5 +1,6 @@
 #!/bin/bash
+# vim:tw=0
 
-find . \( -name '.*' -type d -prune \) -o \( -name tags -type l -delete \)
+find . \( -name '.[a-zA-Z0-9_]*' -type d -prune \) -o \( -name tags -type l -print0 \) | xargs -0r rm
 ctags --exclude='*~' --exclude='*.swp' -R `pwd`
 sources | sed -e 's@/[^/]*$@@g' | sort -u | xargs -L1 sh -c 'test -d "$*" && ! test -e "$*"/tags && ln -s ../tags "$*"' o
