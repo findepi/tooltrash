@@ -41,7 +41,7 @@ awk -W interactive "
 	    }
 	    print; lines += 1;
 	}
-	/(^|$notchar)([Ee]rror|^! .*)($notchar|$)/ {
+	/(^|$notchar)([Ee]rror|undefined reference|^! .*)($notchar|$)/ {
 	    canexit = 1;
 	    if (!maxlines) { maxlines = lines + $maxlinesaftererror; }
 	}
