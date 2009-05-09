@@ -53,16 +53,19 @@ endfor
 " Use the below highlight group when displaying bad whitespace is desired
 highlight BadWhitespace ctermbg=red guibg=red
 " Display tabs at the beginning of a line in Python mode as bad.
-let initial_tabs = matchadd("BadWhitespace", '^\t', -1)
+call matchadd("BadWhitespace", '^\t', -1)
 " Make trailing whitespace be flagged as bad.
-let space_at_eol = matchadd("BadWhitespace", '\s\+$', -1)
+call matchadd("BadWhitespace", '\s\+$', -1)
 
 highlight TooLongLineEnding ctermbg=red guibg=red ctermfg=black guifg=black
 " Make characters in 81+ virtual column be highlighted as errors.
 if &textwidth
-    let too_long_line_ending = matchadd("TooLongLineEnding", '.\%>' . (&textwidth + 2) . 'v', -1)
+    call matchadd("TooLongLineEnding", '.\%>' . (&textwidth + 2) . 'v', -1)
 endif
 
 highlight CitationNeeded ctermbg=yellow guibg=yellow guifg=black ctermfg=black
 call matchadd("CitationNeeded", '\\cite{brak}', -1)
+
+highlight TildeWordJoiner ctermfg=DarkGray
+call matchadd('TildeWordJoiner', '[~]', -1)
 
