@@ -1,5 +1,14 @@
-#!/bin/bash -e
+#!/usr/bin/env python
 
-cd `dirname $0`
-make everything
-make postupdate
+import os
+import subprocess
+
+def run(*args, **kwargs):
+    retcode = subprocess.Popen(*args, **kwargs).wait()
+    if retcode != 0:
+        raise Exception("Subprocess returned %r." % retcode)
+
+os.chdir(os.path.dirname(__file__))
+run(['make', 'everything'])
+run(['make', 'postupdate'])
+
