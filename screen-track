@@ -26,6 +26,7 @@ findimages() {
     findimages -empty -delete -printf "Deleted empty screen shot \`%p'.\n"
 
     #xset b 0 0 0
+    #import -window $(xwininfo -root | grep xwininfo:\ Window\ id: | awk '{print $4}') png:-
     xwd -root -silent | \
         xwdtopnm | \
         pnmscale -xysize 800 600 | \
