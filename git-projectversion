@@ -1,0 +1,25 @@
+#!/bin/bash
+
+while true; do
+
+    # Is there an annotated tag that matches?
+    version=`git describe 2>/dev/null`
+    test "$version" != "" && break
+
+    # Is there a plain tag that matches?
+    version=`git describe --tags 2>/dev/null`
+    test "$version" != "" && break
+
+    # Use just anything as a version.
+    version=`git describe --always 2>/dev/null`
+    test "$version" != "" && break
+
+    echo "No project version could be generated." >&2
+    exit 1
+done
+
+git update-index -q --refresh
+test -z "$(git diff-index --name-only HEAD --)" || version="$version-dirty"
+version="$(echo "$version" | sed -e 's/-/./g' | sed -e 's/^v\([0-9]\)/\1/')"
+
+echo $version
