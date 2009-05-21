@@ -59,13 +59,16 @@ call matchadd("BadWhitespace", '\s\+$', -1)
 
 highlight TooLongLineEnding ctermbg=red guibg=red ctermfg=black guifg=black
 " Make characters in 81+ virtual column be highlighted as errors.
-if &textwidth
-    call matchadd("TooLongLineEnding", '.\%>' . (&textwidth + 2) . 'v', -1)
-endif
+"if &textwidth
+    "call matchadd("TooLongLineEnding", '.\%>' . (&textwidth + 2) . 'v', -1)
+"endif
 
 highlight CitationNeeded ctermbg=yellow guibg=yellow guifg=black ctermfg=black
 call matchadd("CitationNeeded", '\\cite{brak}', -1)
 
 highlight TildeWordJoiner ctermfg=DarkGray
 call matchadd('TildeWordJoiner', '[~]', -1)
+
+"highlight NoTildeAfterSingleLetter ctermbg=Brown
+"call matchadd('NoTildeAfterSingleLetter', '\<\w\(\s\|$\)', -1)
 
