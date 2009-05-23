@@ -105,6 +105,8 @@ if has("gui_running")
     set guifont=Courier\ New
 endif
 
+set spelllang=en,pl
+
 set nowrap
 "set winwidth=80
 "set winheight=25
