@@ -1,0 +1,52 @@
+#!/usr/bin/env python
+
+import sys, subprocess, threading, os, signal, time
+
+assert len(sys.argv) > 1
+
+os.environ['LD_LIBRARY_PATH'] = '.'
+condition = threading.Condition()
+condition.acquire()
+
+start = time.time()
+child = subprocess.Popen(sys.argv[1:])
+childpid = child.pid
+childfinished = False
+
+def childwatch():
+    global childfinished
+    child.wait()
+    end = time.time()
+    print >> sys.stderr, "real", end - start
+    condition.acquire()
+    childfinished = True
+    condition.notify()
+    condition.release()
+    print >> sys.stderr, "childwatch ended"
+
+def stdinwatch():
+    sys.stdin.read()
+    print >> sys.stderr, "stdinwatch triggered"
+    condition.acquire()
+    condition.notify()
+    condition.release()
+    print >> sys.stderr, "stdinwatch ended"
+
+chwth = threading.Thread(target=childwatch)
+chwth.start()
+th = threading.Thread(target=stdinwatch)
+th.setDaemon(True)
+th.start()
+
+condition.wait()
+if not childfinished:
+    try:
+        os.kill(childpid, signal.SIGKILL)
+    except OSError:
+        pass
+condition.release()
+print >> sys.stderr, "main thread ended"
+
+chwth.join()
+sys.exit(child.returncode)
+
