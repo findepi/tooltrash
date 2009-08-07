@@ -1,0 +1,11 @@
+#!/bin/bash
+
+[ $# -ne 1 ] && {
+    echo "Usage: $0 <ip>" >&2
+    exit 1
+}
+
+php -r '
+$tags = get_meta_tags("http://www.geobytes.com/IpLocator.htm?GetLocation&template=php3.txt&IpAddress='$1'");
+print_r($tags);
+'
