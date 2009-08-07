@@ -1,0 +1,14 @@
+#!/bin/bash -xe
+
+screenname=htops
+screen -r $screenname -X quit || true
+screen -S $screenname -d -m htop
+screen -r $screenname -p 0 -X title localhost
+
+i=1
+for host in "$@"; do
+    screen -r $screenname -X screen bash -c "ssh $host -t htop"
+    screen -r $screenname -p $i -X title "$host"
+    let "i = i + 1"
+    screen -r $screenname -p =
+done
