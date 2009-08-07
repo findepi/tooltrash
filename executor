@@ -17,20 +17,20 @@ def childwatch():
     global childfinished
     child.wait()
     end = time.time()
-    print >> sys.stderr, "real", end - start
+    #print >> sys.stderr, "real", end - start
     condition.acquire()
     childfinished = True
     condition.notify()
     condition.release()
-    print >> sys.stderr, "childwatch ended"
+    #print >> sys.stderr, "childwatch ended"
 
 def stdinwatch():
     sys.stdin.read()
-    print >> sys.stderr, "stdinwatch triggered"
+    #print >> sys.stderr, "stdinwatch triggered"
     condition.acquire()
     condition.notify()
     condition.release()
-    print >> sys.stderr, "stdinwatch ended"
+    #print >> sys.stderr, "stdinwatch ended"
 
 chwth = threading.Thread(target=childwatch)
 chwth.start()
@@ -45,7 +45,7 @@ if not childfinished:
     except OSError:
         pass
 condition.release()
-print >> sys.stderr, "main thread ended"
+#print >> sys.stderr, "main thread ended"
 
 chwth.join()
 sys.exit(child.returncode)
