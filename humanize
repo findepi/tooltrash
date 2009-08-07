@@ -1,0 +1,65 @@
+#!/usr/bin/python
+
+"""
+Humanize first number contained by the input and write the whole line to
+output.
+
+Example use:
+
+    To list all files and directories in the current directory, sorted by disk
+    usage and with size humanized run this (assuming `du` has default block
+    size of 1024 bytes):
+
+        find . -mindepth 1 -maxdepth 1 -print0 | xargs -0r du -sx \\
+            | sort -n | humanize base=1024
+"""
+
+import re
+import sys
+import signal
+
+def format_file_size(size):
+    integer, frac = ("%.1f" % size).split('.')
+    if len(integer) > 1:
+        return str(int(round(size, 0)))
+    else:
+        assert len(integer) == 1 == len(frac)
+        return integer + '.' + frac
+
+args = {'base': 1}
+
+# parse arguments
+for i in sys.argv[1:]:
+    argname, _, value = i.partition('=')
+    if value:
+        args[argname] = type(args.get(argname, ''))(value)
+
+try:
+    for line in sys.stdin.xreadlines():
+        line = re.split('(\\s)', line, 1)
+        assert len(line) in (1, 3)
+
+        if len(line) == 3:
+            first, space, rest = line
+            try:
+                first = int(first)
+            except ValueError:
+                pass
+            else:
+                first *= args['base']
+                if first >= 1024 ** 3:
+                    first = format_file_size(first / 1024. ** 3) + 'G'
+                elif first >= 1024 ** 2:
+                    first = format_file_size(first / 1024. ** 2) + 'M'
+                elif first >= 1024:
+                    first = format_file_size(first / 1024.) + 'K'
+                else:
+                    assert 0 <= 0 < 1024
+                    first = str(first)
+
+            line = first + space + rest
+
+        sys.stdout.write(line)
+
+except KeyboardInterrupt:
+    sys.exit(128 + signal.SIGINT)
