@@ -121,6 +121,7 @@ map <F2> :w<CR>
 imap <F2> <ESC><F2>a
 map <F10> :q<CR>
 imap <F10> <ESC><F10>a
+map <C-W> :close<CR>
 
 " default comment/uncomment
 map <C-D> :s@^[[:space:]]*@&#@<CR>:nohls<CR>
