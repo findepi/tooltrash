@@ -4,6 +4,7 @@ import random
 import subprocess
 import sys
 import hashlib
+import time
 
 screen = ['screen']
 
@@ -30,7 +31,7 @@ for arg in args:
 assert hosts
 assert command
 
-def shell(args, **kwargs):
+def shell(args, sleep=0.1, **kwargs):
     print "exec", args,
     if kwargs:
         print kwargs,
@@ -38,6 +39,8 @@ def shell(args, **kwargs):
     popen = subprocess.Popen(args, **kwargs)
     if popen.wait():
         sys.exit(popen.returncode)
+    if sleep is not None:
+        time.sleep(sleep)
     return popen.returncode
 
 shell(screen + ['-S', screen_name, '-d', '-m',])
