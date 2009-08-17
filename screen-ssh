@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+import random
+import subprocess
+import sys
+import hashlib
+
+screen = ['screen']
+
+screen_name = 'S' + hashlib.sha1(str(random.random())).hexdigest()[:10]
+command = 'bash'
+hosts = []
+allocate_terminal = False
+
+args = iter(sys.argv)
+args.next() # eat the program name
+
+for arg in args:
+    if arg == '-S':
+        screen_name = args.next()
+    elif arg == '-e':
+        command = args.next()
+    elif arg == '-l':
+        hosts.append('localhost')
+    elif arg == '-t':
+        allocate_terminal = True
+    else:
+        hosts.append(arg)
+
+assert hosts
+assert command
+
+def shell(args, **kwargs):
+    print "exec", args,
+    if kwargs:
+        print kwargs,
+    print
+    popen = subprocess.Popen(args, **kwargs)
+    if popen.wait():
+        sys.exit(popen.returncode)
+    return popen.returncode
+
+shell(screen + ['-S', screen_name, '-d', '-m',])
+shell(screen + ['-r', screen_name, '-p', '0', '-X', 'title',
+    'localhost: bash'])
+
+for i, host in enumerate(hosts):
+    i += 1
+    shell(screen + ['-r', screen_name, '-X', 'screen', 'ssh', host]
+            + (['-t'] if allocate_terminal else []) + [command])
+    shell(screen + ['-r', screen_name, '-p', str(i), '-X', 'title',
+        host])
+
+sys.exit(shell(screen + ['-r', screen_name, '-p', '=']))
