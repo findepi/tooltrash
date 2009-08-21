@@ -8,6 +8,23 @@ os.environ['LD_LIBRARY_PATH'] = '.'
 condition = threading.Condition()
 condition.acquire()
 
+def time_to_die():
+    condition.acquire()
+    condition.notify()
+    condition.release()
+
+def abort_child(signum, frame):
+    print >> sys.stderr, "deadly", signum, "signal"
+    frame = None
+    time_to_die()
+    try:
+        os.kill(childpid, signal.SIGKILL)
+    except Exception:
+        import traceback
+        traceback.print_exc()
+
+signal.signal(signal.SIGUSR1, abort_child)
+
 start = time.time()
 child = subprocess.Popen(sys.argv[1:])
 childpid = child.pid
@@ -27,9 +44,7 @@ def childwatch():
 def stdinwatch():
     sys.stdin.read()
     #print >> sys.stderr, "stdinwatch triggered"
-    condition.acquire()
-    condition.notify()
-    condition.release()
+    time_to_die()
     #print >> sys.stderr, "stdinwatch ended"
 
 chwth = threading.Thread(target=childwatch)
