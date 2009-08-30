@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+br=`git symbolic-ref HEAD`
+exec git push "${1:-origin}" "$br"

@@ -15,7 +15,6 @@
 	rmdeleted = "! git status | awk 'BEGIN {seen=0} { if(seen) print; } /Changed but not updated/ {seen=1} /Untracked files/ {seen=0}' | grep -E '^#[ \t]*deleted:[ \t]*' | awk '{print $3}' | xargs -r git rm"
 	co = checkout
 	br = branch
-	pu = "! br=`git branch | grep '*' | tr -d '* '`; git push origin refs/heads/$br"
 	apply-patches = am --signoff --3way --whitespace=error
 	cp = cherry-pick
 [gui]
