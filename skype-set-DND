@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+import sys
+import os.path
+import Skype4Py
+
+skype = Skype4Py.Skype()
+skype.Attach()
+
+status_file = os.path.join(os.getenv('HOME') or os.getenv('USERPROFILE'), '.' +
+        os.path.basename(sys.argv[0] or __file__))
+
+if skype.CurrentUserStatus == Skype4Py.cusDoNotDisturb:
+    try:
+        previous_status = open(status_file, 'r').read()
+    except IOError:
+        previous_status = Skype4Py.cusOnline
+
+    skype.CurrentUserStatus = previous_status
+
+else:
+    open(status_file, 'w').write(skype.CurrentUserStatus)
+    skype.CurrentUserStatus = Skype4Py.cusDoNotDisturb
