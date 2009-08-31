@@ -1,4 +1,21 @@
 #!/bin/bash -e
 
+declare -a OPTS
+remote=''
+for i; do
+    case $i in
+        -*)
+            OPTS+=("$i");;
+        *)
+            if [ "$remote" != "" ]; then
+                echo "`basename $0`: remote specified twice." >&2
+                exit 1
+            fi
+            remote="$i";;
+    esac
+done
+
+test "$remote" != "" || remote="origin"
+
 br=`git symbolic-ref HEAD`
-exec git push "${1:-origin}" "$br"
+exec git push "$remote" "$br" "${OPTS[@]}"
