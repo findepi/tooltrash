@@ -5,6 +5,7 @@ import os.path
 import Skype4Py
 
 skype = Skype4Py.Skype()
+skype.FriendlyName = 'set-DND'
 skype.Attach()
 
 status_file = os.path.join(os.getenv('HOME') or os.getenv('USERPROFILE'), '.' +
