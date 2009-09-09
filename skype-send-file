@@ -1,0 +1,79 @@
+#!/usr/bin/env python
+#
+# Starts a Skype File Transfer.
+# The open file dialog is set to a directory containing only the file selected.
+# The users to send to are searched through their Skype name and their full
+# name (display name actually).
+#
+# Requires at least Skype 2.0.0.27.
+#
+# (c) Copyright 2007, Vincent Oberle, vincent@oberle.org
+# (c) Copyright 2009, Piotr Findeisen
+#
+# This software may be used and distributed according to the terms
+# of the GNU Public License, incorporated herein by reference.
+
+
+import sys
+import os
+import tempfile
+
+import Skype4Py
+
+
+if len(sys.argv) < 3:
+    print >> sys.stderr, "Usage: %s file user..." % \
+            os.path.basename(sys.argv[0])
+    sys.exit(1)
+
+skype = Skype4Py.Skype()
+skype.FriendlyName = 'send-file'
+skype.Attach() # attach to Skype client
+
+
+file_name = sys.argv[1]
+dest = sys.argv[2:]
+ids = []
+
+# quick-filter type of search
+for d in dest:
+    found = False
+    # first look for exact Skype ID match
+    for user in skype.Friends:
+        if user.Handle.lower() == d.lower():
+            #print 'Found exact match'
+            ids.append(user)
+            found = True
+            break
+    if found:
+        continue
+    for user in skype.Friends:
+        if user.Handle.lower().find(d.lower()) != -1:
+            ids.append(user)
+        #elif user.FullName.lower().find(d.lower()) != -1: ids.append(user)
+        elif user.DisplayName.lower().find(d.lower()) != -1:
+            ids.append(user)
+
+
+# print who will send to, no need to ask for confirmation as user can still
+# cancel the open file window
+print 'Sending to:'
+for i in ids:
+    if i.FullName:
+        print ' ' + i.FullName + ' (' + i.Handle + ')'
+    else:
+        print ' ' + i.Handle
+
+
+if ids: # ids is a list of Skype IDs
+    temp_dir = tempfile.mkdtemp(prefix=os.path.basename(sys.argv[0]) + '-')
+    os.symlink(os.path.abspath(file_name), os.path.join(temp_dir,
+        os.path.basename(file_name)))
+    in_str = ' IN ' + temp_dir
+    ids_str = ', '.join(i.Handle for i in ids)
+    cmd = 'OPEN FILETRANSFER ' + ids_str + in_str
+    print cmd
+    skype.SendCommand(skype.Command(cmd))
+else:
+    print >> sys.stderr, "no conctacts selected"
+    sys.exit(1)
