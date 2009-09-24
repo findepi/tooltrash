@@ -1,17 +1,13 @@
 #!/usr/bin/env python
 #
 # Starts a Skype File Transfer.
-# The open file dialog is set to a directory containing only the file selected.
-# The users to send to are searched through their Skype name and their full
-# name (display name actually).
 #
 # Requires at least Skype 2.0.0.27.
 #
-# (c) Copyright 2007, Vincent Oberle, vincent@oberle.org
-# (c) Copyright 2009, Piotr Findeisen
+# (c) Copyright 2009, Piotr Findeisen (based on idea of Vincent Oberle,
+# however no his code is left)
 #
-# This software may be used and distributed according to the terms
-# of the GNU Public License, incorporated herein by reference.
+# Free to use.
 
 
 import sys
@@ -37,23 +33,37 @@ ids = []
 
 # quick-filter type of search
 for d in dest:
-    found = False
+    d_orig = d
+    d = d.lower()
+    found = None
     # first look for exact Skype ID match
     for user in skype.Friends:
-        if user.Handle.lower() == d.lower():
-            #print 'Found exact match'
-            ids.append(user)
-            found = True
+        if user.Handle.lower() == d:
+            found = user
             break
-    if found:
-        continue
-    for user in skype.Friends:
-        if user.Handle.lower().find(d.lower()) != -1:
-            ids.append(user)
-        #elif user.FullName.lower().find(d.lower()) != -1: ids.append(user)
-        elif user.DisplayName.lower().find(d.lower()) != -1:
-            ids.append(user)
-
+    if found is None:
+        # then look for exact display name match
+        for user in skype.Friends:
+            if user.DisplayName.lower() == d:
+                found = user
+                break
+    if found is None:
+        # then look for exact full name match
+        for user in skype.Friends:
+            if user.FullName.lower() == d:
+                found = user
+                break
+    if found is None:
+        for user in skype.Friends:
+            if d in user.Handle.lower() or d in \
+                    user.DisplayName.lower() or d in user.FullName:
+                found = user
+                break
+    if found is None:
+        print >> sys.stderr, "Could not match ^%r'" % d_orig
+        sys.exit(1)
+    else:
+        ids.append(user)
 
 # print who will send to, no need to ask for confirmation as user can still
 # cancel the open file window
