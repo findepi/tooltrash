@@ -19,7 +19,7 @@ color() {
     sed \
 	--unbuffered \
 	-e "s/^! \w\+/$red&$reset/g" \
-	-e "s/\b\([Ee]rror\|[Ww]arning\|multiple definitions\?\|cannot find\|undefined reference\|Undefined control sequence\|invalid\)\b/$red\1$reset/g" \
+	-e "s/\b\([Ee]rror\|ERROR\|[Ww]arning\|multiple definitions\?\|cannot find\|undefined reference\|Undefined control sequence\|invalid\)\b/$red\1$reset/g" \
 	-e "s/\b\(note\|In file included from\|instantiated from\)\b/$violet\1$reset/g"
 }
 
