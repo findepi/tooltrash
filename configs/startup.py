@@ -1,5 +1,5 @@
 
-import sys, os.path, re, math, socket, hashlib
+import sys, os.path, re, math, socket, hashlib, random, codecs
 import collections, itertools, functools
 import unicodedata
 from pprint import pprint
@@ -21,7 +21,7 @@ def inspect(item):
 
         try:
             v = getattr(item, k)
-        except:
+        except Exception:
             continue
 
         t = type(v)
