@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import sys
+import os.path
+
+indent_xsl = os.path.join(os.path.dirname(sys.argv[0]), 'files', 'indent.xsl')
+indent_xsl = os.path.abspath(indent_xsl)
+
+progname = os.path.basename(sys.argv[0])
+
+if not os.path.exists(indent_xsl) or not os.path.isfile(indent_xsl):
+    print("%s: %s: file does not exist or is not a file" % (progname,
+        indent_xsl), file=sys.stderr)
+    sys.exit(1)
+
+args = sys.argv[1:]
+if not args:
+    args = ['xsltproc', indent_xsl, '-']
+else:
+    args = ['xsltproc'] + args[:-1] + [indent_xsl, args[-1]]
+
+os.execvp('xsltproc', args)
