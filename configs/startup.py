@@ -39,6 +39,8 @@ def inspect(item):
     if len(itemstr) > inspector_itemstr_len:
         itemstr = itemstr[:(inspector_itemstr_len - 4)] + " ..."
     for k, v in okes:
-        print itemstr, ':', "%s%s = %s" % (k, " " * (maxkl - len(k)), repr(v))
+        sys.stdout.write(' '.join((
+                itemstr, ':', "%s%s = %r" % (k, " " * (maxkl - len(k)), v)
+            )) + '\n')
 
 
