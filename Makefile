@@ -18,7 +18,9 @@ commit:
 
 sync:
 	git pull --rebase
-	git push
+	branch_name=`git symbolic-ref HEAD | sed 's@^.*/@@'`; \
+	    remote_name=`git config branch.$$branch_name.remote || echo origin`; \
+	    git push $$remote_name :
 
 clean:
 	- find . -name \*~ -exec rm -vf '{}' +
