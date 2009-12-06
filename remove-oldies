@@ -51,10 +51,12 @@ if options.file_types:
 if options.dry_run:
     find += ['-printf', r"Would remove %p\n"]
 else:
+    if options.verbose:
+        find += ['-printf', r"Removing %p\n"]
     find.append('-delete')
 
 if options.verbose:
-    sys.stderr.write(repr(find) + "\n")
+    sys.stdout.write(repr(find) + "\n")
 
 if options.no_exec:
     sys.exit()
