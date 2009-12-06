@@ -1,0 +1,62 @@
+#!/usr/bin/python
+
+import optparse
+import os
+import sys
+
+parser = optparse.OptionParser(usage="%prog [options] <dir>",
+        version="%prog 1.0", description="%prog finds old files in `dir` and "
+        "removes them, as well as empty parent directories that are old too.")
+parser.add_option("-t", "--type", dest="file_types", help="comma separater "
+        "list of file types (f, d, l, ... see find(1))", default='')
+parser.add_option("--age", dest="age", metavar="DAYS", help="remove only "
+        "files DAYS+ old", type="int", default=60)
+parser.add_option("--atime", dest="check_atime", action="store_true",
+        help="check files atime")
+parser.add_option('-n', '--dry-run', dest="dry_run", action="store_true",
+        help="print instead of delete (non empty directories that would be "
+        "anyway deleted are not printed); see --verbose and --no-exec")
+parser.add_option('-v', '--verbose', dest="verbose", action="store_true",
+        help="print find command before executing it")
+parser.add_option('--no-exec', dest="no_exec", action="store_true",
+        help="don't execute the real deletion process (useful with --verbose)")
+
+options, args = parser.parse_args(sys.argv)
+
+prog_name, dir, = args
+
+assert options.age >= 0
+age = str(options.age)
+find = ['find', dir,
+            # Don't remove the `dir` itself
+            '-mindepth', '1',
+            # Explicitly ask for bottom-up order.
+            '-depth',
+            # Try to delete only empty directories (notice -depth, however).
+            '(', '-empty', '-o', '!', '-type', 'd', ')',
+            # Select only files old enough.
+            '-mtime', age, '-ctime', age,
+    ]
+if options.check_atime:
+    find += ['-atime', age]
+
+if options.file_types:
+    specs = [spec.strip() for spec in options.file_types.split(',')]
+    find.append('(')
+    for spec in specs:
+        find += ['-type', spec, '-o']
+    find.pop() # pop the last '-o'
+    find.append(')')
+
+if options.dry_run:
+    find += ['-printf', r"Would remove %p\n"]
+else:
+    find.append('-delete')
+
+if options.verbose:
+    sys.stderr.write(repr(find) + "\n")
+
+if options.no_exec:
+    sys.exit()
+
+os.execvp('find', find)
