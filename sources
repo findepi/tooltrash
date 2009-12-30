@@ -1,5 +1,5 @@
 #!/bin/bash
 # vim:tw=0
 
-find -H ${@:-.} -regextype posix-egrep '(' -type d -regex '(.*/)?(\.[^/]+|_darcs|django|django-([a-zA-Z]+-)*trunk|CVS|build)' -prune -false ')' \
+find -H ${@:-.} -regextype posix-egrep '(' -type d -regex '(.*/)+(\.[^/]+|_darcs|django|django-([a-zA-Z]+-)*trunk|CVS|build)' -prune -false ')' \
     -o -type f -a -iregex '(.*/)?(Makefile|[^/]+\.(h|hpp|c|cc|sh|hs|pl|py|cpp|java|xml|html|js|css|po|sql|proto|txt|rules|conf|tex|yml|php))'
