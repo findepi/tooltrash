@@ -26,7 +26,7 @@ options, args = parser.parse_args(sys.argv)
 prog_name, dir, = args
 
 assert options.age >= 0
-age = str(options.age)
+age = '+' + str(options.age)
 find = ['find', dir,
             # Don't remove the `dir` itself
             '-mindepth', '1',
