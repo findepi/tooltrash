@@ -3,6 +3,9 @@
 isatty=yes
 [ "$NOCHECKTTY" = "" ] && ! test -t 1 && isatty=no
 
+GIT_SOURCES=
+[ "$1" = "-git" ] && { GIT_SOURCES=-git; shift; }
+
 sed="sed --unbuffered"
 grep="grep --line-buffered"
 
@@ -50,7 +53,7 @@ code="$1"; shift
 match="($code)"
 $clear
 # assume the file names don't contain '\012' = '\n'
-sources "${@:-.}" | tr '\012' '\000' | xargs -0 $grep -nwHIE "$match" \
+sources $GIT_SOURCES "${@:-.}" | tr '\012' '\000' | xargs -0 $grep -nwHIE "$match" \
     | $sed -e 's/^\([^:]*:[^:]*\):/\1 : /' \
     | truncatelonglines \
     | finalcoloring
