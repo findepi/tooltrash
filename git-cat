@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+    echo "Usage: $(basename $0) <tree-ish> <file>" >&2
+    exit 1
+fi
+
+exec git show "$(git ls-tree "$1" "$2" | cut -d' ' -f 3 | cut -d'	' -f 1)"
