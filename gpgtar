@@ -12,10 +12,10 @@ command="$1"; shift
 case "$command" in
     c)
         archive="$1"; shift
-        tar czvf - "$@" | gpg -c > "$archive";;
+        tar czvf - "$@" | gpg --force-mdc -c > "$archive";;
 
     x)
-        gpg -d "$1" | tar xzvf -;;
+        gpg -q -d "$1" | tar xzvf -;;
 
     *)
         echo "$(basename $0): unknown command '$command'" >&2
