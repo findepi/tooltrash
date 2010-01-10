@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -o pipefail
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $(basename $0) [cx] <archive> [files...]" >&2
+    exit 1
+fi
+
+command="$1"; shift
+
+case "$command" in
+    c)
+        archive="$1"; shift
+        tar czvf - "$@" | gpg -c > "$archive";;
+
+    x)
+        gpg -d "$1" | tar xzvf -;;
+
+    *)
+        echo "$(basename $0): unknown command '$command'" >&2
+        exit 1;;
+esac
