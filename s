@@ -16,7 +16,7 @@ prog="$1"
 shift
 
 case "$prog" in
-    VIm)	$prog "$file" "+$line" "$@";;
-    kwrite)	$prog "$file" --line $[line - 1] "$@";;
-    *)	vim "$file" "+$line";;
+    VIm)	exec $prog "$file" "+$line" "$@";;
+    kwrite)	exec $prog "$file" --line $[line - 1] "$@";;
+    *)	        exec vim "$file" "+$line";;
 esac
