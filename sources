@@ -7,9 +7,9 @@ if [ "$1" = '-git' ]; then
     shift;
     set -o pipefail
     git ls-tree -r --name-only HEAD "${@:-.}" \
-        | grep -E "(^|/)(Makefile|[^/]+\\.($SOURCES_EXTENSIONS))\$"
+        | grep -E "(^|/)(Makefile|cron-[^~/]+|[^/]+\\.($SOURCES_EXTENSIONS))\$"
     exit
 fi
 
 exec find -H ${@:-.} -regextype posix-egrep '(' -type d -regex '(.*/)+(\.[^/]+|_darcs|django|django-([a-zA-Z]+-)*trunk|CVS|build)' -prune -false ')' \
-    -o -type f -a -iregex "(.*/)?(Makefile|[^/]+\\.($SOURCES_EXTENSIONS))"
+    -o -type f -a -iregex "(.*/)?(Makefile|cron-[^/~]+|[^/]+\\.($SOURCES_EXTENSIONS))"
