@@ -26,7 +26,7 @@ if has("vms")
 else
   set backup		" keep a backup file
 endif
-set history=50		" keep 50 lines of command line history
+set history=500		" keep 500 lines of command line history
 set ruler		" show the cursor position all the time
 set showcmd		" display incomplete commands
 set incsearch		" do incremental searching
@@ -167,6 +167,8 @@ nnoremap <silent> <F5> :set invhls<CR>:exec "let @/='\\<".expand("<cword>")."\\>
 nnoremap <silent> <F3> :TlistOpen<CR>
 let Tlist_Close_On_Select = 1
 
+highlight NoBreakSpace ctermbg=DarkBlue
+call matchadd('NoBreakSpace', '[ ]', -1)
 
 " support for vim-trac plugin
 " (http://www.vim.org/scripts/script.php?script_id=2147)
