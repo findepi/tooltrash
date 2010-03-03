@@ -1,0 +1,7 @@
+#!/bin/bash
+# vim:nobk
+
+git cherry "$@" \
+    | grep ^+ \
+    | awk '{print $2}' \
+    | xargs git show --shortstat

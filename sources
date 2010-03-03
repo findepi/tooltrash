@@ -1,5 +1,5 @@
 #!/bin/bash
-# vim:tw=0
+# vim:tw=0 nobk
 
 SOURCES_EXTENSIONS='h|hpp|c|cc|sh|hs|pl|py|cpp|java|xml|html|js|css|po|sql|proto|txt|rules|conf|tex|yml|php'
 
