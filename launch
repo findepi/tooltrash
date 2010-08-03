@@ -1,4 +1,6 @@
 #!/bin/sh
 
-exec kfmclient exec "$@"
+for i; do
+    kfmclient exec "$i"
+done
 
