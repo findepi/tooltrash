@@ -1,0 +1,26 @@
+! vim:ft=xmodmap
+
+! — (emdash) as AltGr--
+! ' ' (no-break space) as Shit-AltGr--
+keycode 20 = minus underscore minus underscore emdash nobreakspace
+
+! « as AltGr-< (Shitf-AltGr-,)
+! × (multiply) as AltGr-,
+keycode 59 = comma less comma less multiply guillemotleft
+
+! » as AltGr-> (Shitf-AltGr-.)
+! • as AltGr-.
+keycode 60 = period greater period greater enfilledcircbullet guillemotright
+
+! Add Euro sign as AltGr-4 ($)
+keycode 13 = 4 dollar 4 dollar EuroSign dollar
+
+! Add infinity as AltGr-8
+keycode 17 = 8 asterisk 8 asterisk infinity trademark
+
+!! Bullet as AltGr-.
+!keycode 60 = period greater period greater enfilledcircbullet periodcentered
+
+! Change Right Control into Multi Key
+keycode 105 = Multi_key Control_R
+
