@@ -106,7 +106,7 @@ if has("gui_running")
 endif
 
 set spelllang=en,pl
-
+set modeline
 set nowrap
 "set winwidth=80
 "set winheight=25
