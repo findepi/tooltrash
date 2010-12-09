@@ -126,6 +126,9 @@ imap <F10> <ESC><F10>a
 map <C-D> :s@^[[:space:]]*@&#@<CR>:nohls<CR>
 map <C-U> :s@^\([[:space:]]*\)#@\1@<CR>:nohls<CR>
 
+" wrapping
+let &showbreak = "⤷ "
+set linebreak
 
 set fileencodings=utf-8,latin2
 "set encoding=utf-8
