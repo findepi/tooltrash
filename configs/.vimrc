@@ -127,7 +127,7 @@ map <C-D> :s@^[[:space:]]*@&#@<CR>:nohls<CR>
 map <C-U> :s@^\([[:space:]]*\)#@\1@<CR>:nohls<CR>
 
 " wrapping
-let &showbreak = "⤷ "
+let &showbreak = "⤷  "
 set linebreak
 
 set fileencodings=utf-8,latin2
