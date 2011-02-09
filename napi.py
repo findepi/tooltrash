@@ -13,7 +13,7 @@
 #
 # POZDRAWIAMY NASZYCH FANOW!
 
-import md5,sys,urllib,os
+import sys,urllib,os,hashlib
 
 def f(z):
 	idx = [ 0xe, 0x3,  0x6, 0x8, 0x2 ]
@@ -37,7 +37,7 @@ if(len(sys.argv)==1):
 	print "wy*dalaj na stadion po film"
 	sys.exit(2)
 
-d = md5.new();
+d = hashlib.md5();
 d.update(open(sys.argv[1]).read(10485760))
 
 str = "http://napiprojekt.pl/unit_napisy/dl.php?l=PL&f="+d.hexdigest()+"&t="+f(d.hexdigest())+"&v=other&kolejka=false&nick=&pass=&napios="+os.name
