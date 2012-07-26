@@ -129,8 +129,9 @@ map <C-U> :s@^\([[:space:]]*\)#@\1@<CR>:nohls<CR>
 " wrapping
 let &showbreak = "⤷  "
 set linebreak
+set display=lastline
 
-set fileencodings=utf-8,latin2
+set fileencodings=ucs-bom,utf-8,latin2
 "set encoding=utf-8
 
 set tabstop=8 " every tab is 8-spaces long
