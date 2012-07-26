@@ -1,0 +1,11 @@
+#!/bin/bash
+
+pattern="$1"
+shift
+
+find "${@:-.}" \
+    -type f -readable \
+    -iregex '.*\.\(jar\|zip\|ear\|war\)' \
+    -printf "timeout -k 30 20 zipgrep -n '$pattern' '%p' \
+        | sed 's@^@%p:	@' \
+        | grep --color '$pattern'\n" | sh
