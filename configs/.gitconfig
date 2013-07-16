@@ -12,7 +12,7 @@
 	ci = commit -v
 	di = diff
 	sync = "! git pull --rebase && git pu "
-	rmdeleted = "! git status | awk 'BEGIN {seen=0} { if(seen) print; } /Changed but not updated|Changes not staged for commit/ {seen=1} /Untracked files/ {seen=0}' | grep -E '^#[ \t]*deleted:[ \t]*' | awk '{print $3}' | xargs -r git rm"
+	rmdeleted = "! git ls-files --deleted -z | xargs -0 git rm"
 	co = checkout
 	br = branch
 	apply-patches = am --signoff --3way --whitespace=error
