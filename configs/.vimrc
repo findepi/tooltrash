@@ -102,7 +102,7 @@ command -nargs=1 Find edit `find -name <args> \| grep -vE '~$' \| head -n 1`
 " UI
 color cs
 if has("gui_running")
-    set guifont=Courier\ New
+    set guifont=DejaVu\ Sans\ Mono
 endif
 
 set spelllang=en,pl
