@@ -218,6 +218,7 @@
 
 <Multi_key> <C> <C> <C> <P>             : "☭"   U262D # HAMMER AND SICKLE
 <Multi_key> <less> <3>                  : "♥"   U2665 # BLACK HEART SUIT
+<Multi_key> <greater> <3>               : "♠"   U2660 # BLACK SPADE SUIT
 
 # Part 2
 
