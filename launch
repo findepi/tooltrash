@@ -1,6 +1,6 @@
 #!/bin/sh
 
 for i; do
-    kfmclient exec "$i"
+    xdg-open "$i"
 done
 
