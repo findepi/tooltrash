@@ -1,0 +1,136 @@
+#!/bin/bash
+# vim:ft=python:
+'''true'
+which python3 >/dev/null && exec python3 "$0" "$@"
+which python >/dev/null && exec python "$0" "$@"
+'''
+
+import os, shutil, subprocess, os.path
+
+from os.path import isdir
+from os import listdir
+from sys import maxsize
+from logging import getLogger
+
+log = getLogger(__name__)
+
+def faithful_copy(args):
+    source = args.source
+    target = args.target
+    log.info("Will make faithful copy of %s in %s", source, target)
+    if not isdir(source):
+        raise ValueError("Not directory: %s" % (source,))
+    if not isdir(target):
+        raise ValueError("Not directory: %s" % (target,))
+
+    actual_target, previous_target = get_copy_target(args, target, args.copies)
+    do_copy(args, source, actual_target, previous_target=previous_target)
+
+def do_copy(args, source, actual_target, previous_target=None):
+    rsync = ['rsync',
+            # --archive, i.e.
+            '--recursive', '--links', '--perms', '--times', '--group',
+            '--owner',
+            # and more
+            '--hard-links', '--acls', '--xattrs',
+            # cleanup
+            '--delete-during', '--delete-excluded', '--force',
+            # processing
+            '--protect-args', '--stats', '--progress', '--human-readable',
+            ]
+
+    for rules in args.rsync_filter:
+        rsync += ['--filter', rules]
+
+    if previous_target is not None:
+        rsync += ['--link-dest', os.path.abspath(previous_target)]
+
+    if args.bwlimit is not None:
+        rsync += ['--bwlimit', args.bwlimit]
+
+    rsync += ['--verbose', '--itemize-changes']
+    rsync += [source, actual_target]
+
+    if args.nice:
+        rsync = ['nice', 'ionice', '-n', '7', '-t'] + rsync
+
+    log.info("Running: %s", rsync)
+
+    if not args.dry_run:
+        subprocess.call(rsync)
+        os.utime(actual_target)
+
+    else:
+        log.warn("--dry-run requested. Aborting")
+
+def get_copy_target(args, target, copies):
+    subdirs = get_subdirs(target)
+    subdirs.sort(key=lambda e: os.stat(e).st_mtime, reverse=True)
+    # subdirs: newest first
+
+    if len(subdirs) < copies:
+        new_name = new_copy_target(target)
+        copy_target = target + '/' + new_name
+        log.info("Creating new copy target: %s", copy_target)
+        if not args.dry_run:
+            os.mkdir(copy_target)
+
+    else:
+
+        while len(subdirs) > copies:
+            old_copy_target = subdirs.pop()
+            log.info("Too many copies. Removing oldest copy: %s",
+                    old_copy_target)
+            if not args.dry_run:
+                shutil.rmtree(old_copy_target)
+
+        copy_target = subdirs.pop()
+        log.info("Reusing old copy as copy target: %s", copy_target)
+
+    previous_target = subdirs[0] if subdirs else None
+
+    return (copy_target, previous_target)
+
+def new_copy_target(target):
+    existing_names = set(listdir(target))
+    for i in range(0, maxsize):
+        name = 'copydir' + str(i)
+        if name not in existing_names:
+            return name
+    raise RuntimeError("Can't find new name")
+
+def get_subdirs(directory):
+    subdirs = []
+    for e in listdir(directory):
+        subdir = directory + '/' + e
+        if isdir(subdir):
+            subdirs.append(subdir)
+    return subdirs
+
+
+if __name__ == '__main__':
+    import argparse
+    import logging
+
+    parser = argparse.ArgumentParser(description='Faithful copy')
+    parser.add_argument('source', help='source directory of the copy')
+    parser.add_argument('target', help='where to write the copy')
+    parser.add_argument('--copies', metavar='N', type=int, default=2,
+            help='how many copies should be kept (default 2)')
+    parser.add_argument('--log', metavar='LEVEL', default='INFO',
+            help='logging level (default \'INFO\')')
+    parser.add_argument('--nice', action='store_true',
+            help='be nice and ionice to others (this is default)')
+    parser.add_argument('--no-nice', action='store_false', dest='nice',
+            help='don\'t be nice or ionice to others')
+    parser.add_argument('--bwlimit', metavar='KBPS',
+            help='bandwith limit, KiB/s')
+    parser.add_argument('--rsync-filter', metavar='RULES', action='append',
+            help='rsync filter rules (can be repeated)')
+    parser.add_argument('--dry-run', default=False, action='store_true')
+    args = parser.parse_args()
+
+    logging.basicConfig(level=args.log.upper(),
+            format='%(asctime)s %(levelname)s [%(name)s] %(message)s')
+
+    faithful_copy(args)
