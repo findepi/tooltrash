@@ -105,7 +105,7 @@ if has("gui_running")
     set guifont=DejaVu\ Sans\ Mono
 endif
 
-set spelllang=en,pl
+set spelllang=en
 set modeline
 set nowrap
 "set winwidth=80
@@ -124,7 +124,10 @@ imap <F10> <ESC><F10>a
 
 " default comment/uncomment
 map <C-D> :s@^[[:space:]]*@&#@<CR>:nohls<CR>
-map <C-U> :s@^\([[:space:]]*\)#@\1@<CR>:nohls<CR>
+map <C-U> :s@^\([[:space:]]*\)#@\2@<CR>:nohls<CR>
+
+" split line
+:nnoremap K i<CR><Esc>
 
 " wrapping
 let &showbreak = "⤷  "
