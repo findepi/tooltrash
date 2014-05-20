@@ -184,4 +184,7 @@ if filereadable(glob('~/.vimtrac'))
     source ~/.vimtrac
 endif
 
+" SQL Utilities
+let g:sqlutil_col_list_terminators = 'primary,reference,unique,check,foreign' 
+
 " vim:softtabstop=2
