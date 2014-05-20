@@ -1,0 +1,59 @@
+#!/bin/bash -e
+
+if test $# != 2; then
+    echo "Usage: $0 <file1> <file2>" >&2
+    exit 1
+fi
+
+check_exists() {
+    type "$1" &>/dev/null || {
+        echo "$0: $1: command now found" >&2
+        exit 2
+    }
+}
+
+check_exists diff
+#check_exists xmllint
+check_exists xsltproc
+
+xslt_stylesheet() {
+cat <<EOF
+<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+    <xsl:output method="xml" indent="yes"/>
+    <xsl:template match="*">
+        <xsl:copy>
+            <xsl:apply-templates select="* | @*">
+                <xsl:sort select="not(@*)" order="ascending" data-type="number"/>
+                <xsl:sort select="@*"/>
+            </xsl:apply-templates>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="*/@*">
+        <xsl:copy>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="text()[not(string-length(normalize-space()))]"/>
+    <xsl:template match="*/text()[normalize-space()]">
+        <xsl:value-of select="normalize-space()"/>
+    </xsl:template>
+</xsl:stylesheet>
+EOF
+}
+
+normalize_xml() {
+    # xmllint --c14n "$1"
+    xsltproc <(xslt_stylesheet) "$1"
+    #java -classpath /usr/share/java/saxon.jar com.icl.saxon.StyleSheet "$1" <(xslt_stylesheet)
+}
+
+
+diff=diff
+type colordiff &>/dev/null && diff=colordiff
+
+normalize_xml "$1" > "$1.norm"
+normalize_xml "$2" > "$2.norm"
+
+$diff -u <(normalize_xml "$1") <(normalize_xml "$2")
+
