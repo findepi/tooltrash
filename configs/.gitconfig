@@ -12,7 +12,6 @@
 	ci = commit -v
 	di = diff
 	sync = "! git pull --rebase && git pu "
-	rmdeleted = "! git ls-files --deleted -z | xargs -0 git rm"
 	co = checkout
 	br = branch
 	apply-patches = am --signoff --3way --whitespace=error
