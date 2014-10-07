@@ -6,7 +6,7 @@ if exists("b:current_syntax")
 endif
 
 
-let &showbreak = "                                     ⤷  "
+let &showbreak = "        ⤷  "
 
 syn match fatal ".* FATAL .*"
 syn match fatal "^FATAL: .*"
