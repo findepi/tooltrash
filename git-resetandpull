@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+green='\e[0;32m'
+end_color='\e[0m'
+
+ex() {
+    echo -e "${green}+ $*${end_color}"
+    "$@"
+}
+
+ex git fetch origin --prune --tags
+ex git rebase --onto HEAD~10 HEAD || {
+    ex git status
+    exit 1
+}
+ex git pull
+ex git log --oneline -n6
