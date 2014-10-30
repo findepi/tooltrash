@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if test $# -eq 1; then
+    git commit --fixup="$1"
+else
+    echo "Usage: $0 <commitish>" >&2
+    exit 1
+fi
