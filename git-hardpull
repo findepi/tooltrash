@@ -18,4 +18,4 @@ ex git rebase --onto HEAD~1 HEAD || {
     exit 1
 }
 ex git reset --hard "$(git rev-parse --abbrev-ref --symbolic-full-name @{u})"
-ex git log --oneline -n6
+ex git --no-pager log --oneline -n6
