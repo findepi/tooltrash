@@ -29,5 +29,10 @@ ex git diff-files --quiet --exit-code --ignore-submodules -- \
         exit 1
     }
 
-ex git reset --hard "$(git rev-parse --abbrev-ref --symbolic-full-name @{u})"
+if [ "$(git rev-parse HEAD)" = "$(git rev-parse '@{u}')" ]; then
+    err "No new changes upstream and no local changes to revert"
+else
+    ex git reset --hard "$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}')"
+fi
+
 ex git --no-pager log --oneline -n6
