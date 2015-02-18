@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
+program_name="$(basename "$0")"
 green='\e[0;32m'
+red='\e[0;31m'
 end_color='\e[0m'
 
 ex() {
@@ -8,14 +10,24 @@ ex() {
     "$@"
 }
 
+err() {
+    echo -e "${red}${program_name}: $*${end_color}" >&2
+}
+
 ex git fetch --prune --tags origin \
     || ex git fetch --prune --tags \
         "$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d/ -f1)"
 
 # Check for 'dirty' state (and fail). If clean, remote 1 last commit.
-ex git rebase --onto HEAD~1 HEAD || {
-    ex git status
-    exit 1
-}
+ex git update-index -q --ignore-submodules --refresh
+ex git diff-files --quiet --exit-code --ignore-submodules -- \
+    && ex git diff-index --quiet --exit-code --cached HEAD --ignore-submodules -- \
+    || {
+        err "You have staged or unstaged changes."
+        err "Please commit or stash them."
+        ex git status
+        exit 1
+    }
+
 ex git reset --hard "$(git rev-parse --abbrev-ref --symbolic-full-name @{u})"
 ex git --no-pager log --oneline -n6
