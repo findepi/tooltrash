@@ -1,0 +1,5 @@
+#!/bin/bash -ex
+
+git pushbranch --delete
+git checkout master
+git branch -D @{-1}
