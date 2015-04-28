@@ -36,4 +36,4 @@ else
     ex git reset --hard "${upstream_branch}"
 fi
 
-ex git --no-pager log --oneline -n6
+ex git --no-pager log --oneline -n6 @{1}..@{0}
