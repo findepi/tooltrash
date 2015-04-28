@@ -29,11 +29,11 @@ ex git diff-files --quiet --exit-code --ignore-submodules -- \
         exit 1
     }
 
+head="$(git rev-parse HEAD)"
 upstream_branch="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}')"
-if [ "$(git rev-parse HEAD)" = "$(git rev-parse "${upstream_branch}")" ]; then
+if [ "${head}" = "$(git rev-parse "${upstream_branch}")" ]; then
     err "No new changes upstream (${upstream_branch}) and no local changes to revert"
 else
     ex git reset --hard "${upstream_branch}"
+    ex git --no-pager log --oneline -n6 ${head}..
 fi
-
-ex git --no-pager log --oneline -n6 @{1}..@{0}
