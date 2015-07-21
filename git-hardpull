@@ -35,5 +35,5 @@ if [ "${head}" = "$(git rev-parse "${upstream_branch}")" ]; then
     err "No new changes upstream (${upstream_branch}) and no local changes to revert"
 else
     ex git reset --hard "${upstream_branch}"
-    ex git --no-pager log --oneline -n6 ${head}..
+    ex git --no-pager log --oneline "${head}.."
 fi
