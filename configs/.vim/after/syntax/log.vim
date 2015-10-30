@@ -8,16 +8,11 @@ endif
 
 let &showbreak = "        ⤷  "
 
-syn match fatal ".* FATAL .*"
-syn match fatal "^FATAL: .*"
-syn match error ".* ERROR .*"
-syn match error "^ERROR: .*"
-syn match warn ".* WARN .*"
-syn match warn "^WARN: .*"
-syn match info ".* INFO .*"
-syn match info "^INFO: .*"
-syn match debug ".* DEBUG .*"
-syn match debug "^DEBUG: .*"
+syn match fatal "^\(\(DEBUG\|INFO\|WARN\|ERROR\|FATAL\)\@!.\)*\<FATAL\>.*"
+syn match error "^\(\(DEBUG\|INFO\|WARN\|ERROR\|FATAL\)\@!.\)*\<ERROR\>.*"
+syn match warn "^\(\(DEBUG\|INFO\|WARN\|ERROR\|FATAL\)\@!.\)*\<WARN\>.*"
+syn match info "^\(\(DEBUG\|INFO\|WARN\|ERROR\|FATAL\)\@!.\)*\<INFO\>.*"
+syn match debug "^\(\(DEBUG\|INFO\|WARN\|ERROR\|FATAL\)\@!.\)*\<DEBUG\>.*"
 
 syn match error "^java.*Exception.*"
 syn match error "^java.*Error.*"
