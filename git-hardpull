@@ -6,7 +6,7 @@ red='\e[0;31m'
 end_color='\e[0m'
 
 ex() {
-    echo -e "${green}+ $*${end_color}"
+    echo -e "${green}+ $*${end_color}" >&2
     "$@"
 }
 
