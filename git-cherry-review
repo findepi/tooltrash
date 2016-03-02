@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# exit on subcommand error
+set -o errexit
+# or when using undeclared variable
+set -o nounset
+# or when part of pipe fails
+set -o pipefail
+
 err() {
     echo "$@" >&2
     exit 1
@@ -7,7 +14,7 @@ err() {
 
 test $# -eq 1 || err "Usage: $0 <committish>"
 
-commit="$1"
+commit="$(git rev-parse "$1")"
 branch=master
 origin=origin
 
