@@ -19,3 +19,5 @@
 [gui]
 	fontui = -family \"nimbus sans l\" -size 12 -weight normal -slant roman -underline 0 -overstrike 0
 	diffcontext = 4
+[diff]
+	noprefix = true
