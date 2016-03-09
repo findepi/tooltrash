@@ -21,3 +21,5 @@
 	diffcontext = 4
 [diff]
 	noprefix = true
+[rebase]
+	autosquash = yes
