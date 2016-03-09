@@ -11,11 +11,15 @@
 	st = status
 	ci = commit -v
 	di = diff
+	dc = diff --cached
 	sync = "! git pull --rebase && git pu "
 	co = checkout
 	br = branch
 	apply-patches = am --signoff --3way --whitespace=error
 	cp = cherry-pick
+	cpi = cherry-pick -X ignore-all-space
+	fetch = fetch --prune
+	showr = show --notes=refs/notes/review
 [gui]
 	fontui = -family \"nimbus sans l\" -size 12 -weight normal -slant roman -underline 0 -overstrike 0
 	diffcontext = 4
