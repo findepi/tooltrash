@@ -23,3 +23,5 @@
 	noprefix = true
 [rebase]
 	autosquash = yes
+[push]
+	default = nothing
