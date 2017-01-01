@@ -1,0 +1,8 @@
+#!/bin/bash -xe
+
+find "${@-/no/path/given}" \
+    -print \
+    \( \
+        -type f \
+        -exec shred --zero --iterations=0 --remove {} \; \
+    \) -o -delete
