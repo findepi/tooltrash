@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# exit on subcommand error
+set -o errexit
+# or when using undeclared variable
+set -o nounset
+# or when part of pipe fails
+set -o pipefail
+
+err() {
+    echo "$@" >&2
+    exit 1
+}
+
+test $# -eq 1 || err "Usage: $0 <committish>"
+
+commit="$(git rev-parse "$1")"
+branch=master
+origin=origin
+
+git update-index -q --ignore-submodules --refresh \
+    || err "refreshing index failed"
+
+git diff-files --exit-code --ignore-submodules -- \
+    || err "There are unstaged changed"
+
+git diff-index --exit-code --cached HEAD --ignore-submodules -- \
+    || err "There are staged but not committed changes"
+
+github_url="$(git remote get-url origin \
+    | sed 's#\.git$##' \
+    | sed -s 's#^git@github.com:#https://github.com/#' `# support git and https clone URLs`
+)"
+
+# Now we must print everything we do. In case of failure, user might want to
+# know how to rollback.
+set -x
+
+git checkout "${origin}/${branch}" \
+    && git cherry-pick "${commit}" \
+    && git push "${origin}" "HEAD:refs/heads/$(whoami)/${commit:0:10}" \
+    && xdg-open "${github_url}" \
+    && git checkout -
