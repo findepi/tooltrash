@@ -32,12 +32,16 @@ github_url="$(git remote get-url origin \
     | sed -s 's#^git@github.com:#https://github.com/#' `# support git and https clone URLs`
 )"
 
+commit_slug="$( git show -s --format=%s "${commit}" \
+    | tr -cs '[a-zA-Z0-9]' '-' \
+    | sed 's/-*$//' )"
+
 # Now we must print everything we do. In case of failure, user might want to
 # know how to rollback.
 set -x
 
 git checkout "${origin}/${branch}" \
     && git cherry-pick "${commit}" \
-    && git push "${origin}" "HEAD:refs/heads/$(whoami)/${commit:0:10}" \
-    && xdg-open "${github_url}" \
+    && git push "${origin}" "HEAD:refs/heads/$(whoami)/${commit:0:10}-${commit_slug}" \
+    && xdg-open "${github_url}" && sleep 3 \
     && git checkout -
