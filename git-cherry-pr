@@ -29,7 +29,7 @@ git diff-index --exit-code --cached HEAD --ignore-submodules -- \
 
 github_url="$(git remote get-url origin \
     | sed 's#\.git$##' \
-    | sed -s 's#^git@github.com:#https://github.com/#' `# support git and https clone URLs`
+    | sed -s 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
 
 commit_slug="$( git show -s --format=%s "${commit}" \
