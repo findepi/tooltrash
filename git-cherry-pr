@@ -34,6 +34,7 @@ github_url="$(git remote get-url origin \
 
 commit_slug="$( git show -s --format=%s "${commit}" \
     | tr -cs '[a-zA-Z0-9]' '-' \
+    | tr '[A-Z]' '[a-z]' \
     | sed 's/-*$//' )"
 
 # Now we must print everything we do. In case of failure, user might want to
