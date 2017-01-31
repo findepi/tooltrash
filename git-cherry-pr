@@ -43,6 +43,6 @@ set -x
 
 git checkout "${origin}/${branch}" \
     && git cherry-pick "${commit}" \
-    && git push "${origin}" "HEAD:refs/heads/$(whoami)/${commit:0:5}-${commit_slug}" \
+    && git push "${origin}" "HEAD:refs/heads/$(whoami)/${commit_slug}-${commit:0:5}" \
     && xdg-open "${github_url}" && sleep 3 \
     && git checkout -
