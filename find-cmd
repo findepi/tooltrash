@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if test $# -eq 0; then
+    echo "Usage: $0 <cmd...> " >&2
+    exit 1
+fi
+
+while test $# -gt 0; do
+    if which -s "$1"; then
+        echo "$1"
+        exit
+    fi
+    shift
+done
+
+echo "No matching command found. Sorry, I don't remmeber what I was looking for, so won't tell ya."
+exit 2
