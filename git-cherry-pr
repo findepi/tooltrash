@@ -18,6 +18,9 @@ commit="$(git rev-parse "$1")"
 branch=master
 origin=origin
 
+sed="$(find-cmd gsed sed)"
+open="$(find-cmd xdg-open open)"
+
 git update-index -q --ignore-submodules --refresh \
     || err "refreshing index failed"
 
@@ -28,14 +31,14 @@ git diff-index --exit-code --cached HEAD --ignore-submodules -- \
     || err "There are staged but not committed changes"
 
 github_url="$(git remote get-url origin \
-    | sed 's#\.git$##' \
-    | sed -s 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
+    | $sed 's#\.git$##' \
+    | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
 
 commit_slug="$( git show -s --format=%s "${commit}" \
     | tr -cs '[a-zA-Z0-9]' '-' \
     | tr '[A-Z]' '[a-z]' \
-    | sed 's/-*$//' )"
+    | $sed 's/-*$//' )"
 
 # Now we must print everything we do. In case of failure, user might want to
 # know how to rollback.
@@ -44,5 +47,5 @@ set -x
 git checkout "${origin}/${branch}" \
     && git cherry-pick "${commit}" \
     && git push "${origin}" "HEAD:refs/heads/$(whoami)/${commit_slug}-${commit:0:5}" \
-    && xdg-open "${github_url}" && sleep 3 \
+    && $open "${github_url}" && sleep 3 \
     && git checkout -
