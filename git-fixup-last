@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Credits for idea go to Artur Gajowy
+
+set -euo pipefail
+
+git diff --name-only | tr '\n' '\0' | xargs -0 -n 1 bash -euc '
+
+file="$1"
+hash="$(git log -1 --pretty=format:%H "${file}")"
+git commit --fixup="${hash}" "${file}"
+
+' -
