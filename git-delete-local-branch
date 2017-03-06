@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -euo pipefail
+
+branch="$(git symbolic-ref --short HEAD)"
+head="$(git rev-parse HEAD)"
+upstream="$(git rev-parse HEAD@{u})"
+
+if [ "${head}" = "${upstream}" ]; then
+    # Pushed, safe to delete locally
+    set -x
+    git checkout master
+    git branch -D "${branch}"
+    exit
+else
+    progname="$(basename "$0")"
+    echo "${progname}: Error: Branch ${branch} does not appear to be pushed externally." >&2
+    echo "${progname}: Error: Unsafe to delete. Use can delete it with:" >&2
+    echo "git checkout master && git branch -D '${branch}'" >&2
+    exit 1
+fi
+

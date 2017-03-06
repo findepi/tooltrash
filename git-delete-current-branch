@@ -1,5 +1,0 @@
-#!/bin/bash -ex
-
-branch="$(git symbolic-ref --short HEAD)"
-git checkout master
-git branch -D "${branch}"
