@@ -6,7 +6,7 @@ origin=origin
 branch="$(git symbolic-ref --short HEAD)"
 head="$(git rev-parse HEAD)"
 
-if git rev-parse HEAD@{u} 2>/dev/null; then
+if git rev-parse HEAD@{u} >/dev/null; then
     upstream="$(git rev-parse HEAD@{u})"
 else
     guessed_upstream_branch="${origin}/${branch}"
