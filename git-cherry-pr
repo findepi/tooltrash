@@ -12,10 +12,10 @@ err() {
     exit 1
 }
 
-test $# -eq 1 || err "Usage: $0 <committish>"
+test $# -eq 1 || err "Usage: $0 <committish> [<remote upstream branch>]"
 
 commit="$(git rev-parse "$1")"
-branch=master
+branch="${2-master}"
 origin=origin
 
 sed="$(find-cmd gsed sed)"
