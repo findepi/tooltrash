@@ -12,7 +12,7 @@ err() {
     exit 1
 }
 
-test $# -eq 1 || err "Usage: $0 <committish> [<remote upstream branch>]"
+test $# -ge 1 -a $# -le 2 || err "Usage: $0 <committish> [<remote upstream branch>]"
 
 commit="$(git rev-parse "$1")"
 branch="${2-master}"
