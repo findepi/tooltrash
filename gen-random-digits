@@ -1,0 +1,12 @@
+#!/usr/bin/env python
+
+import random
+
+def rdigit():
+    return random.randint(0, 9)
+
+rows = 24
+cols = 80
+
+for r in range(rows):
+    print(' '.join(str(rdigit()) for c in range(cols / 2)))
