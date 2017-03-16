@@ -1,0 +1,3 @@
+#!/bin/bash -eu
+
+exec git log HEAD --not --exclude '*/pf/**' --exclude "*/$(whoami)**" --remotes --oneline --reverse
