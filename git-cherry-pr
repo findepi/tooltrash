@@ -35,7 +35,7 @@ github_url="$(git remote get-url origin \
     | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
 
-commit_slug="$( git show -s --format=%s "${commit}" \
+commit_slug="$( git show --no-patch --format=%s "${commit}" \
     | tr -cs '[a-zA-Z0-9]' '-' \
     | tr '[A-Z]' '[a-z]' \
     | $sed 's/-*$//' )"
