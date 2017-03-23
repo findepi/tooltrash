@@ -6,7 +6,7 @@ if test $# -eq 0; then
 fi
 
 while test $# -gt 0; do
-    if which -s "$1"; then
+    if which "$1" >/dev/null; then
         echo "$1"
         exit
     fi
