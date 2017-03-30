@@ -7,7 +7,7 @@ set -euo pipefail
 git diff --name-only "$@" | tr '\n' '\0' | xargs -0 -n 1 bash -euc '
 
 file="$1"
-hash="$(git log -1 --pretty=format:%H "${file}")"
+hash="$(git log --pretty="format:%H %s" "${file}" | grep -v "fixup!" | head -1 | cut -d" " -f1)"
 git commit --fixup="${hash}" "${file}"
 
 ' -
