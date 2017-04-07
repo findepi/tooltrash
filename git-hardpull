@@ -14,7 +14,11 @@ err() {
     echo "${red}${program_name}: $*${end_color}" >&2
 }
 
-ex git fetch --prune --tags origin \
+sed="$(find-cmd gsed sed)"
+origin="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} \
+    | $sed -n 's@/.*@@p')"
+origin="${origin-origin}"
+ex git fetch --prune --tags "${origin}" \
     || ex git fetch --prune --tags \
         "$(git rev-parse --abbrev-ref --symbolic-full-name @{u} | cut -d/ -f1)"
 
