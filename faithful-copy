@@ -33,6 +33,7 @@ def do_copy(args, source, actual_target, previous_target=None):
             '--owner',
             # and more
             '--hard-links', '--acls', '--xattrs',
+            '--no-specials', '--no-devices',
             # cleanup
             '--delete-during', '--delete-excluded', '--force',
             # processing
