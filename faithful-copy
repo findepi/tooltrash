@@ -32,8 +32,9 @@ def do_copy(args, source, actual_target, previous_target=None):
             '--recursive', '--links', '--perms', '--times', '--group',
             '--owner',
             # and more
-            '--hard-links', '--acls', '--xattrs',
-            '--no-specials', '--no-devices',
+            '--hard-links', '--acls',
+            '--no-xattrs', # not possible to backup to e.g. NFS
+            '--no-specials', '--no-devices', # backing up these has no sense
             # cleanup
             '--delete-during', '--delete-excluded', '--force',
             # processing
