@@ -7,8 +7,10 @@
 	branch = auto
 	ui = auto
 [alias]
+	ap = add -p
 	apply-patches = am --signoff --3way --whitespace=error
 	br = branch
+	chpr = cherry-pr
 	ci = commit -v
 	co = checkout
 	cp = cherry-pick
@@ -16,10 +18,13 @@
 	dc = diff --cached
 	di = diff
 	fetch = fetch --prune
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+	llg = locallog
 	showr = show --notes=refs/notes/review
 	st = status
 	sync = "! git pull --rebase && git pu "
 	up = "!git update-index -q --refresh; if git diff-index --quiet --cached HEAD --ignore-submodules -- && git diff-files --quiet --ignore-submodules; then git pull --rebase; else git stash && { git pull --rebase ; git stash pop; }; fi"
+	dlb = delete-local-branch
 [gui]
 	fontui = -family \"nimbus sans l\" -size 12 -weight normal -slant roman -underline 0 -overstrike 0
 	diffcontext = 4
@@ -29,3 +34,9 @@
 	autosquash = yes
 [push]
 	default = nothing
+[core]
+#	pager = diff-so-fancy | less --tabs=4 -RFX
+[fetch]
+	prune = true
+[remote "origin"]
+	tagOpt = --tags
