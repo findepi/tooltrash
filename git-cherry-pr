@@ -17,6 +17,7 @@ test $# -ge 1 -a $# -le 2 || err "Usage: $0 <committish> [<remote upstream branc
 commit="$(git rev-parse "$1")"
 branch="${2-master}"
 origin=origin
+private_branch_prefix="$(git config findepi.private-branch-prefix || echo "$(whoami)/")"
 
 sed="$(find-cmd gsed sed)"
 open="$(find-cmd xdg-open open)"
@@ -46,6 +47,6 @@ set -x
 
 git checkout "${origin}/${branch}" \
     && git cherry-pick "${commit}" \
-    && git push "${origin}" "HEAD:refs/heads/$(whoami)/${commit_slug}-${commit:0:5}" \
+    && git push "${origin}" "HEAD:refs/heads/$(private_branch_prefix}${commit_slug}-${commit:0:5}" \
     && $open "${github_url}" && sleep 3 \
     && git checkout -
