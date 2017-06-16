@@ -39,5 +39,5 @@ if [ "${head}" = "$(git rev-parse "${upstream_branch}")" ]; then
     err "No new changes upstream (${upstream_branch}) and no local changes to revert"
 else
     ex git reset --hard "${upstream_branch}"
-    ex git --no-pager log --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative "${head}.."
+    ex git --no-pager log --pretty=tformat:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative "${head}.."
 fi
