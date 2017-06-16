@@ -6,7 +6,7 @@ red=$'\e[0;31m'
 end_color=$'\e[0m'
 
 ex() {
-    echo "${green}+ $*${end_color}" >&2
+    echo "${green}+ $(printf '%q ' "$@" | sed 's/ $//')${end_color}" >&2
     "$@"
 }
 
