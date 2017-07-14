@@ -1,3 +1,5 @@
 #!/bin/bash -eu
 
-exec git log HEAD --not --exclude '*/pf/**' --exclude "*/$(whoami)**" --remotes --oneline "$@"
+exec git \
+    log --graph --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative \
+    HEAD --not --exclude '*/pf/**' --exclude "*/$(whoami)**" --remotes "$@"
