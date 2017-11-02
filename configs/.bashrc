@@ -9,6 +9,8 @@ if [ -f $(brew --prefix)/etc/bash_completion ]; then
   . $(brew --prefix)/etc/bash_completion
 fi
 
+source ~/.iterm2_shell_integration.bash
+
 HISTCONTROL=ignorespace:ignoredups
 HISTSIZE=1000
 HISTFILESIZE=10000
