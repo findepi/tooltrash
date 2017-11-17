@@ -17,7 +17,6 @@ for i; do
     esac
 done
 
-test "$remote" != "" || remote="origin"
-
-br="$(git symbolic-ref HEAD)"
-exec git push "$remote" "$br" ${push_opts[@]+"${push_opts[@]}"}
+branch="$(git name-rev --name-only HEAD)"
+test "$remote" != "" || remote="$(git config "branch.$branch.remote")"
+git push "$remote" "$branch" ${push_opts[@]+"${push_opts[@]}"}
