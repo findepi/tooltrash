@@ -1,11 +1,13 @@
-#!/bin/bash -e
+#!/bin/bash
 
-declare -a OPTS
+set -euo pipefail
+
+declare -a push_opts
 remote=''
 for i; do
     case $i in
         -*)
-            OPTS+=("$i");;
+            push_opts+=("$i");;
         *)
             if [ "$remote" != "" ]; then
                 echo "`basename $0`: remote specified twice." >&2
@@ -17,5 +19,5 @@ done
 
 test "$remote" != "" || remote="origin"
 
-br=`git symbolic-ref HEAD`
-exec git push "$remote" "$br" "${OPTS[@]}"
+br="$(git symbolic-ref HEAD)"
+exec git push "$remote" "$br" ${push_opts[@]+"${push_opts[@]}"}
