@@ -2,6 +2,14 @@
 
 set -euo pipefail
 
+green=$'\e[0;32m'
+end_color=$'\e[0m'
+
+ex() {
+    echo "${green}+ $(printf '%q ' "$@" | sed 's/ $//')${end_color}" >&2
+    "$@"
+}
+
 declare -a push_opts
 remote=''
 for i; do
@@ -19,4 +27,4 @@ done
 
 branch="$(git name-rev --name-only HEAD)"
 test "$remote" != "" || remote="$(git config "branch.$branch.remote")"
-git push "$remote" "$branch" ${push_opts[@]+"${push_opts[@]}"}
+ex git push "$remote" "$branch" ${push_opts[@]+"${push_opts[@]}"}
