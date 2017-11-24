@@ -20,6 +20,7 @@
 	fetch = fetch --prune
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 	llg = locallog
+	pushbranch = ! git -c push.default=simple push
 	rc = ! env EDITOR=: git rebase --continue
 	showr = show --notes=refs/notes/review
 	st = status
