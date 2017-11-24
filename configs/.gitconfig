@@ -41,3 +41,5 @@
 	prune = true
 [remote "origin"]
 	tagOpt = --tags
+[rerere]
+	enabled = 1
