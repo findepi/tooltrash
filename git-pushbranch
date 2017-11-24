@@ -25,6 +25,6 @@ for i; do
     esac
 done
 
-branch="$(git name-rev --name-only HEAD)"
+branch="$(git symbolic-ref HEAD | sed 's@^refs/heads/@@')"
 test "$remote" != "" || remote="$(git config "branch.$branch.remote")"
 ex git push "$remote" "$branch" ${push_opts[@]+"${push_opts[@]}"}
