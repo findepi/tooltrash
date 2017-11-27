@@ -1,5 +1,18 @@
-#!/bin/bash -ex
+#!/bin/bash
 
-git pushbranch --delete
-git checkout master
-git branch -D @{-1}
+set -e
+
+green=$'\e[0;32m'
+end_color=$'\e[0m'
+
+ex() {
+    echo "${green}+ $(printf '%q ' "$@" | sed 's/ $//')${end_color}" >&2
+    "$@"
+}
+
+branch="$(git symbolic-ref HEAD)"
+remote="$(git config "branch.$(sed 's@^refs/heads/@@' <<< "$branch").remote")"
+
+ex git push "$remote" --delete "$branch"
+ex git checkout master
+ex git branch -D @{-1}
