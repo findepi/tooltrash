@@ -18,7 +18,7 @@
 	dc = diff --cached
 	di = diff
 	fetch = fetch --prune
-	lg = log --graph --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
+	lg = log --graph --pretty=tformat:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
 	llg = locallog
 	pushbranch = ! git -c push.default=simple push
 	rc = ! env EDITOR=: git rebase --continue
