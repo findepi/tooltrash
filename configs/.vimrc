@@ -118,6 +118,7 @@ endif
 
 set spelllang=en
 set modeline
+set modelines=3
 set nowrap
 "set winwidth=80
 "set winheight=25
