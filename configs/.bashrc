@@ -11,6 +11,9 @@ fi
 
 source ~/.iterm2_shell_integration.bash
 
+alias grep='grep --color=auto'
+alias pwgen='pwgen --ambiguous --capitalize --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
+
 HISTCONTROL=ignorespace:ignoredups
 HISTSIZE=1000
 HISTFILESIZE=10000
