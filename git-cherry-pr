@@ -7,11 +7,42 @@ err() {
     exit 1
 }
 
-test $# -ge 1 -a $# -le 2 || err "Usage: $0 <committish> [<remote upstream branch>]"
+usage() {
+    echo "Usage: $0 [-o] <committish> [<remote upstream branch>]" >&2
+}
+
+origin=origin
+
+while getopts "ho" opt "$@"; do
+    case "${opt}" in
+        o)
+            # Use same remote as the origin of the upstream branch
+            origin=
+            ;;
+        h)
+            usage
+            exit
+            ;;
+        '?')
+            echo "$opt"
+            usage
+            exit 1
+            ;;
+        *)
+            err "Unrecognized option '${opt}'"
+    esac
+done
+
+shift $((OPTIND-1))
+
+if ! test $# -ge 1 -a $# -le 2; then
+    echo "Incorrect number of arguments" >&2
+    usage
+    exit 1
+fi
 
 commit="$(git rev-parse "$1")"
 branch="${2-master}"
-origin=origin
 private_branch_prefix="$(git config findepi.private-branch-prefix || echo "$(whoami)/")"
 
 sed="$(find-cmd gsed sed)"
@@ -26,7 +57,16 @@ git diff-files --exit-code --ignore-submodules -- \
 git diff-index --exit-code --cached HEAD --ignore-submodules -- \
     || err "There are staged but not committed changes"
 
-github_url="$(git remote get-url origin \
+if test "${origin}" = ""; then
+    # We need to determine origin from branch name.
+    # First, try to read from local branch configuration, if that exists.
+    if ! origin="$(git config "branch.${branch}.remote")"; then
+        # Second, check existing remote branches
+        origin="$(git branch -r | sed 's/^\s\+//' | grep "^\([-a-z]\+\)/${branch}" | cut -d/ -f1)"
+    fi
+fi
+
+github_url="$(git remote get-url "${origin}" \
     | $sed 's#\.git$##' \
     | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
