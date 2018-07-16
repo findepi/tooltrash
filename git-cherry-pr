@@ -41,7 +41,7 @@ if ! test $# -ge 1 -a $# -le 2; then
     exit 1
 fi
 
-commit="$(git rev-parse "$1")"
+commits="$1"
 branch="${2-master}"
 private_branch_prefix="$(git config findepi.private-branch-prefix || echo "$(whoami)/")"
 
@@ -71,17 +71,21 @@ github_url="$(git remote get-url "${origin}" \
     | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
 
-commit_slug="$( git show --no-patch --format=%s "${commit}" \
+commit_slug="$( git log -1 --pretty=format=%s "${commits}" \
     | tr -cs '[a-zA-Z0-9]' '-' \
     | tr '[A-Z]' '[a-z]' \
     | $sed 's/-*$//' )"
+
+source_hash="$(git rev-parse "${commits}" | sha1sum | cut -c 1-6)"
+
+new_branch_name="${private_branch_prefix}${branch}/${commit_slug}-${source_hash}"
 
 # Now we must print everything we do. In case of failure, user might want to
 # know how to rollback.
 set -x
 
 git checkout "${origin}/${branch}" \
-    && git cherry-pick "${commit}" \
-    && git push "${origin}" "HEAD:refs/heads/${private_branch_prefix}${branch}/${commit_slug}-${commit:0:5}" \
+    && git cherry-pick "${commits}" \
+    && git push "${origin}" "HEAD:refs/heads/${new_branch_name}" \
     && $open "${github_url}" && sleep 3 \
     && git checkout -
