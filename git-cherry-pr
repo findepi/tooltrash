@@ -82,6 +82,6 @@ set -x
 
 git checkout "${origin}/${branch}" \
     && git cherry-pick "${commit}" \
-    && git push "${origin}" "HEAD:refs/heads/${private_branch_prefix}${commit_slug}-${commit:0:5}" \
+    && git push "${origin}" "HEAD:refs/heads/${private_branch_prefix}${branch}/${commit_slug}-${commit:0:5}" \
     && $open "${github_url}" && sleep 3 \
     && git checkout -
