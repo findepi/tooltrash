@@ -1,11 +1,6 @@
 #!/bin/bash
 
-# exit on subcommand error
-set -o errexit
-# or when using undeclared variable
-set -o nounset
-# or when part of pipe fails
-set -o pipefail
+set -euo pipefail
 
 err() {
     echo "$@" >&2
