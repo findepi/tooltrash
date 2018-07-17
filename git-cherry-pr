@@ -41,7 +41,7 @@ if ! test $# -ge 1 -a $# -le 2; then
     exit 1
 fi
 
-commits="$1"
+commits="$(git rev-parse "$1")"
 branch="${2-master}"
 private_branch_prefix="$(git config findepi.private-branch-prefix || echo "$(whoami)/")"
 
@@ -71,12 +71,12 @@ github_url="$(git remote get-url "${origin}" \
     | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
 
-commit_slug="$( git log -1 --pretty=format=%s "${commits}" \
+commit_slug="$( git log -1 --pretty=format=%s ${commits} \
     | tr -cs '[a-zA-Z0-9]' '-' \
     | tr '[A-Z]' '[a-z]' \
     | $sed 's/-*$//' )"
 
-source_hash="$(git rev-parse "${commits}" | sha1sum | cut -c 1-6)"
+source_hash="$(echo "${commits}" | sha1sum | cut -c 1-6)"
 
 new_branch_name="${private_branch_prefix}${branch}/${commit_slug}-${source_hash}"
 
@@ -85,7 +85,7 @@ new_branch_name="${private_branch_prefix}${branch}/${commit_slug}-${source_hash}
 set -x
 
 git checkout "${origin}/${branch}" \
-    && git cherry-pick "${commits}" \
+    && git cherry-pick ${commits} \
     && git push "${origin}" "HEAD:refs/heads/${new_branch_name}" \
     && $open "${github_url}" && sleep 3 \
     && git checkout -
