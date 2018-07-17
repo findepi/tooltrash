@@ -11,12 +11,14 @@ usage() {
     echo "Usage: $0 [-o] <committish> [<remote upstream branch>]" >&2
 }
 
+same_origin=false
 origin=origin
 
 while getopts "ho" opt "$@"; do
     case "${opt}" in
         o)
             # Use same remote as the origin of the upstream branch
+            same_origin=true
             origin=
             ;;
         h)
@@ -66,11 +68,6 @@ if test "${origin}" = ""; then
     fi
 fi
 
-github_url="$(git remote get-url "${origin}" \
-    | $sed 's#\.git$##' \
-    | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
-)"
-
 commit_slug="$( git log -1 --pretty="%s" ${commits} \
     | tr -cs '[a-zA-Z0-9]' '-' \
     | tr '[A-Z]' '[a-z]' \
@@ -79,6 +76,15 @@ commit_slug="$( git log -1 --pretty="%s" ${commits} \
 source_hash="$(echo "${commits}" | sha1sum | cut -c 1-6)"
 
 new_branch_name="${private_branch_prefix}${branch}/${commit_slug}-${source_hash}"
+
+github_url="$(git remote get-url "${origin}" \
+    | $sed 's#\.git$##' \
+    | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
+)"
+
+if "${same_origin}" || test "${branch}" != "master"; then
+    github_url="${github_url}/compare/${branch}...${new_branch_name}?expand=1"
+fi
 
 # Now we must print everything we do. In case of failure, user might want to
 # know how to rollback.
