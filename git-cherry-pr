@@ -71,7 +71,7 @@ github_url="$(git remote get-url "${origin}" \
     | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
 
-commit_slug="$( git log -1 --pretty=format=%s ${commits} \
+commit_slug="$( git log -1 --pretty="%s" ${commits} \
     | tr -cs '[a-zA-Z0-9]' '-' \
     | tr '[A-Z]' '[a-z]' \
     | $sed 's/-*$//' )"
