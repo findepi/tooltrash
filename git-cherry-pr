@@ -94,5 +94,5 @@ set -x
 git checkout "${origin}/${branch}" \
     && git cherry-pick ${commits} \
     && git push "${origin}" "HEAD:refs/heads/${new_branch_name}" \
-    && $open "${github_url}" && sleep 3 \
+    && $open "${github_url}" \
     && git checkout -
