@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+image="$1"
+path="$2"
+target="${3--}"
+test "${target}" = "/dev/stdout" && target=- # `docker` may have no access to /dev/stdout
+
+function pipeline-exit-code {
+    test $# -gt 0
+    while test $# -gt 0; do
+        if test "$1" -ne 0; then
+            echo "$1"
+            return
+        fi
+        shift
+    done
+    echo 0
+}
+
+temp_container_name="$(docker create "${image}")"
+
+set +e # ensure container cleanup even if path invalid, etc.
+if test "${target}" = "-"; then
+    docker cp "${temp_container_name}:${path}" - \
+        | tar -x --to-stdout
+    exit_code="$(pipeline-exit-code "${PIPESTATUS[@]}")"
+else
+    docker cp "${temp_container_name}:${path}" "${target}"
+    exit_code=$?
+fi
+set -e
+
+docker rm "${temp_container_name}" >/dev/null
+exit "${exit_code}"
