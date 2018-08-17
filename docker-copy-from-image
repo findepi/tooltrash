@@ -7,7 +7,7 @@ path="$2"
 target="${3--}"
 test "${target}" = "/dev/stdout" && target=- # `docker` may have no access to /dev/stdout
 
-function pipeline-exit-code {
+pipeline_exit_code() {
     test $# -gt 0
     while test $# -gt 0; do
         if test "$1" -ne 0; then
@@ -25,7 +25,7 @@ set +e # ensure container cleanup even if path invalid, etc.
 if test "${target}" = "-"; then
     docker cp "${temp_container_name}:${path}" - \
         | tar -x --to-stdout
-    exit_code="$(pipeline-exit-code "${PIPESTATUS[@]}")"
+    exit_code="$(pipeline_exit_code "${PIPESTATUS[@]}")"
 else
     docker cp "${temp_container_name}:${path}" "${target}"
     exit_code=$?
