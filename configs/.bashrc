@@ -15,8 +15,9 @@ alias grep='grep --color=auto'
 alias pwgen='pwgen --ambiguous --capitalize --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
 
 HISTCONTROL=ignorespace:ignoredups
-HISTSIZE=1000
+HISTSIZE=10000
 HISTFILESIZE=10000
+shopt -s histappend
 
 GIT_PS1_SHOWDIRTYSTATE=true
 GIT_PS1_DESCRIBE_STYLE=branch
