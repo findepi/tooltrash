@@ -22,6 +22,7 @@
 	lg = log --pretty=tformat:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
 	llg = locallog
 	pushbranch = ! git -c push.default=simple push
+	rb = rebase
 	rc = ! env EDITOR=: git rebase --continue
 	showr = show --notes=refs/notes/review
 	st = status
