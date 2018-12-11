@@ -64,7 +64,7 @@ if test "${origin}" = ""; then
     # First, try to read from local branch configuration, if that exists.
     if ! origin="$(git config "branch.${branch}.remote")"; then
         # Second, check existing remote branches
-        if ! origin="$(git branch -r | sed 's/^\s\+//' | grep "^\([-a-z]\+\)/${branch}" | cut -d/ -f1)"; then
+        if ! origin="$(git branch -r | $sed 's/^\s\+//' | grep "^\([-a-z]\+\)/${branch}" | cut -d/ -f1)"; then
             err "Failed to find remote for branch ${branch}"
         fi
     fi
