@@ -19,6 +19,7 @@
 	di = diff
 	edit = "!sh -c 'GIT_SEQUENCE_EDITOR=\"sed -i -e \\\"1 s/pick/edit/\\\"\" git rebase --no-autosquash -i `git rev-parse $0`^'"
 	fetch = fetch --prune
+	git = "!git"
 	lg = log --pretty=tformat:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
 	llg = locallog
 	pushbranch = ! git -c push.default=simple push
