@@ -19,14 +19,17 @@
 	di = diff
 	edit = "!sh -c 'GIT_SEQUENCE_EDITOR=\"sed -i -e \\\"1 s/pick/edit/\\\"\" git rebase --no-autosquash -i `git rev-parse $0`^'"
 	fetch = fetch --prune
+	fpr = ! git fetch origin \"pull/$1/head\" && :
 	git = "!git"
 	lg = log --pretty=tformat:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
 	llg = locallog
+	prco = ! git fpr "$1" && git checkout FETCH_HEAD && :
 	pushbranch = ! git -c push.default=simple push
 	rb = rebase
+	rbi = rebase -i
 	rc = ! env EDITOR=: git rebase --continue
 	showr = show --notes=refs/notes/review
-	st = status
+	st = status --short
 	sync = "! git pull --rebase && git pu "
 	up = "!git update-index -q --refresh; if git diff-index --quiet --cached HEAD --ignore-submodules -- && git diff-files --quiet --ignore-submodules; then git pull --rebase; else git stash && { git pull --rebase ; git stash pop; }; fi"
 	dlb = delete-local-branch
