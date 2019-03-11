@@ -4,20 +4,21 @@ set -euo pipefail
 
 branch="$(git symbolic-ref --short HEAD)"
 head="$(git rev-parse HEAD)"
+default_branch="$(git config findepi.default-branch || echo "master")"
 
 local_commits="$(git log HEAD --not --remotes --oneline | wc -l)"
 
 if [ "${local_commits}" -eq 0 ]; then
     # Pushed, safe to delete locally
     set -x
-    git checkout master
+    git checkout "${default_branch}"
     git branch -D "${branch}"
     exit
 else
     progname="$(basename "$0")"
     echo "${progname}: Error: Branch ${branch} does not appear to be pushed externally." >&2
     echo "${progname}: Error: Unsafe to delete. Use can delete it with:" >&2
-    echo "git checkout master && git branch -D '${branch}'" >&2
+    echo "git checkout '${default_branch}' && git branch -D '${branch}'" >&2
     exit 1
 fi
 
