@@ -29,7 +29,7 @@
 	rbi = rebase -i
 	rc = ! env EDITOR=: git rebase --continue
 	showr = show --notes=refs/notes/review
-	st = status --short
+	st = status
 	sync = "! git pull --rebase && git pu "
 	up = "!git update-index -q --refresh; if git diff-index --quiet --cached HEAD --ignore-submodules -- && git diff-files --quiet --ignore-submodules; then git pull --rebase; else git stash && { git pull --rebase ; git stash pop; }; fi"
 	dlb = delete-local-branch
