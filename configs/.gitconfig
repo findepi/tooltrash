@@ -51,3 +51,5 @@
 	tagOpt = --tags
 [rerere]
 	enabled = 1
+[merge]
+	renameLimit = 0
