@@ -13,6 +13,7 @@
 	chpr = cherry-pr
 	ci = commit -v
 	co = checkout
+	copr = ! git fpr "$1" && git checkout FETCH_HEAD && :
 	cp = cherry-pick
 	cpi = cherry-pick -X ignore-all-space
 	dc = diff --cached
@@ -23,7 +24,6 @@
 	git = "!git"
 	lg = log --pretty=tformat:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
 	llg = locallog
-	prco = ! git fpr "$1" && git checkout FETCH_HEAD && :
 	pushbranch = ! git -c push.default=simple push
 	rb = rebase
 	rbi = rebase -i
