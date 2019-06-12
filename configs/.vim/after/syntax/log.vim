@@ -19,10 +19,10 @@ syn match error "^java.*Error.*"
 syn match error "^\tat .*"
 
 " Highlight colors for log levels.
-hi fatal ctermfg=Red guifg=Red ctermbg=Black
+hi fatal ctermfg=Red guifg=Red ctermbg=Black guibg=White
 hi error ctermfg=Red guifg=Red ctermbg=Black guibg=White
-hi warn ctermfg=Yellow guifg=Brown ctermbg=Black
-hi info ctermfg=Green guifg=DarkGreen ctermbg=Black
+hi warn ctermfg=Yellow guifg=DarkYellow ctermbg=Black
+"hi info ctermfg=Green guifg=DarkGreen ctermbg=Black
 hi debug ctermfg=Gray guifg=Black ctermbg=Black
 
 let b:current_syntax = "log"
