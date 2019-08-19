@@ -71,8 +71,8 @@ if test "${origin}" = ""; then
 fi
 
 commit_slug="$( git log -1 --pretty="%s" ${commits} \
-    | tr -cs '[a-zA-Z0-9]' '-' \
-    | tr '[A-Z]' '[a-z]' \
+    | tr -cs 'a-zA-Z0-9' '-' \
+    | tr 'A-Z' 'a-z' \
     | $sed 's/-*$//' )"
 
 source_hash="$(echo "${commits}" | sha1sum | cut -c 1-6)"
