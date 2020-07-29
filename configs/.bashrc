@@ -12,7 +12,7 @@ fi
 source ~/.iterm2_shell_integration.bash
 
 alias grep='grep --color=auto'
-alias pwgen='pwgen --ambiguous --capitalize --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
+alias pwgen='pwgen --ambiguous --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
 
 HISTCONTROL=ignorespace:ignoredups
 HISTSIZE=10000
