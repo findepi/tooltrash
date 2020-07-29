@@ -10,4 +10,4 @@ linelimit="$(for i in `seq 0 $linelimit`; do echo -n .; done)"
 	sed -u
     fi
 } | \
-    awk -W interactive '{  system("echo -n `date +%Y-%m-%d\ %H-%M` \":    \""); print; }';
+    awk -W interactive '{  system("echo -n `date +%Y-%m-%d\ %H:%M:%S` \":    \""); print; }';
