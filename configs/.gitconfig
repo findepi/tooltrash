@@ -15,6 +15,7 @@
 	co = checkout
 	copr = ! git fpr "$1" && git checkout FETCH_HEAD && :
 	cp = cherry-pick
+	cpc = ! git -c core.editor=true cherry-pick --continue
 	cpi = cherry-pick -X ignore-all-space
 	dc = diff --cached
 	di = diff
@@ -29,6 +30,7 @@
 	rbi = rebase -i
 	rc = ! env EDITOR=: git rebase --continue
 	showr = show --notes=refs/notes/review
+	shfr = show --pretty=fuller
 	st = status
 	sync = "! git pull --rebase && git pu "
 	up = "!git update-index -q --refresh; if git diff-index --quiet --cached HEAD --ignore-submodules -- && git diff-files --quiet --ignore-submodules; then git pull --rebase; else git stash && { git pull --rebase ; git stash pop; }; fi"

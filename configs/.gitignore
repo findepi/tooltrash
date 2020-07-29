@@ -1,2 +1,6 @@
+# vim
 *~
 *.sw[op]
+
+# jenv
+.java-version
