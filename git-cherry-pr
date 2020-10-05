@@ -77,7 +77,12 @@ commit_slug="$( git log -1 --pretty="%s" ${commits} \
 
 source_hash="$(echo "${commits}" | sha1sum | cut -c 1-6)"
 
-new_branch_name="${private_branch_prefix}${branch}/${commit_slug}-${source_hash}"
+if test "${branch}" = "master"; then
+    branch_qualifier=""
+else
+    branch_qualifier="${branch}/"
+fi
+new_branch_name="${private_branch_prefix}${branch_qualifier}${commit_slug}-${source_hash}"
 
 github_url="$(git remote get-url "${origin}" \
     | $sed 's#\.git$##' \
