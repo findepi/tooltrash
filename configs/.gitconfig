@@ -55,3 +55,5 @@
 	enabled = 1
 [merge]
 	renameLimit = 0
+[log]
+	follow = true
