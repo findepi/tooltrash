@@ -4,3 +4,7 @@
 
 # jenv
 .java-version
+
+# Idea
+.idea/
+*.iml
