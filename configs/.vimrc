@@ -110,8 +110,10 @@ command -nargs=1 Find edit `find -name <args> \| grep -vE '~$' \| head -n 1`
 
 "color evening
 
-" UI
-color cs
+"" UI
+"color cs
+"" tell MacVim not to override our color scheme https://stackoverflow.com/a/21114248
+"let macvim_skip_colorscheme=1
 
 set spelllang=en
 set modeline
