@@ -8,3 +8,7 @@
 # Idea
 .idea/
 *.iml
+
+# Tempto (https://github.com/trinodb/tempto)'s configuration file.
+# Name per convention as used in Trino (https://github.com/trinodb/trino).
+tempto-configuration-local.yaml
