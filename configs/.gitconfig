@@ -57,3 +57,5 @@
 	renameLimit = 0
 [log]
 	follow = true
+[advice]
+	skippedCherryPicks = false
