@@ -8,18 +8,22 @@ err() {
 }
 
 usage() {
-    echo "Usage: $0 [-o] <committish> [<remote upstream branch>]" >&2
+    echo "Usage: $0 [-o | -r remote] <committish> [<remote upstream branch>]" >&2
 }
 
 same_origin=false
 origin=origin
 
-while getopts "ho" opt "$@"; do
+while getopts "hor:" opt "$@"; do
     case "${opt}" in
         o)
             # Use same remote as the origin of the upstream branch
             same_origin=true
             origin=
+            ;;
+        r)
+            # Use specified remote
+            origin="${OPTARG}"
             ;;
         h)
             usage
