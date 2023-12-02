@@ -11,6 +11,9 @@ if which brew >/dev/null; then
     if [ -f $(brew --prefix)/etc/bash_completion ]; then
       . $(brew --prefix)/etc/bash_completion
     fi
+
+    # bash-completion v2
+    [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 fi
 
 source ~/.iterm2_shell_integration.bash
