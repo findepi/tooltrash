@@ -5,8 +5,12 @@
 #    . "$f"
 #  done
 #fi
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-  . $(brew --prefix)/etc/bash_completion
+
+if which brew >/dev/null; then
+    # bash-completion v1
+    if [ -f $(brew --prefix)/etc/bash_completion ]; then
+      . $(brew --prefix)/etc/bash_completion
+    fi
 fi
 
 source ~/.iterm2_shell_integration.bash
