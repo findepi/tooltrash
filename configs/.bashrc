@@ -14,6 +14,11 @@ if which brew >/dev/null; then
 
     # bash-completion v2
     [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+
+    if test "$(stat -f '%Su' "$(brew --prefix)/bin")" != "$(whoami)"; then
+        # TODO don't invoke sudo for read-only stuff like `brew --prefix`
+        alias brew="sudo -Hu $(stat -f '%Su' "$(brew --prefix)/bin") brew"
+    fi
 fi
 
 source ~/.iterm2_shell_integration.bash
