@@ -3,11 +3,11 @@
 if which brew >/dev/null; then
     # bash-completion v1
     if [ -f $(brew --prefix)/etc/bash_completion ]; then
-      . $(brew --prefix)/etc/bash_completion
+      source $(brew --prefix)/etc/bash_completion
     fi
 
     # bash-completion v2
-    [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && . "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+    [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 
     if test "$(stat -f '%Su' "$(brew --prefix)/bin")" != "$(whoami)"; then
         # TODO don't invoke sudo for read-only stuff like `brew --prefix`
