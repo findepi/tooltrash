@@ -1,11 +1,5 @@
 #!bash
 
-#if [ -d $(brew --prefix)/etc/bash_completion.d ]; then
-#  for f in $(brew --prefix)/etc/bash_completion.d/*; do
-#    . "$f"
-#  done
-#fi
-
 if which brew >/dev/null; then
     # bash-completion v1
     if [ -f $(brew --prefix)/etc/bash_completion ]; then
