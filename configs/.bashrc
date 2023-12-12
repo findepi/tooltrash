@@ -1,20 +1,21 @@
 #!bash
 
-if which brew >/dev/null; then
+if bashrc_brew_prefix="$(brew --prefix 2>/dev/null)"; then
     # bash-completion v1
-    if [ -f $(brew --prefix)/etc/bash_completion ]; then
-      source $(brew --prefix)/etc/bash_completion
+    if [ -f "${bashrc_brew_prefix}/etc/bash_completion" ]; then
+      source "${bashrc_brew_prefix}/etc/bash_completion"
     fi
 
     # bash-completion v2
-    [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
+    [[ -r "${bashrc_brew_prefix}/etc/profile.d/bash_completion.sh" ]] && source "${bashrc_brew_prefix}/etc/profile.d/bash_completion.sh"
 
     # MacOS `stat -f '%Su' <path>` or GNU `stat -c '%U' <path>` gives the owner
-    if test "$(/usr/bin/stat -f '%Su' "$(brew --prefix)/bin")" != "$(whoami)"; then
+    if test "$(/usr/bin/stat -f '%Su' "${bashrc_brew_prefix}/bin")" != "$(whoami)"; then
         # TODO don't invoke sudo for read-only stuff like `brew --prefix`
-        alias brew="sudo -Hu $(/usr/bin/stat -f '%Su' "$(brew --prefix)/bin") brew"
+        alias brew="sudo -Hu $(/usr/bin/stat -f '%Su' "${bashrc_brew_prefix}/bin") brew"
     fi
 fi
+unset bashrc_brew_prefix
 
 test -f ~/.iterm2_shell_integration.bash && source ~/.iterm2_shell_integration.bash
 
