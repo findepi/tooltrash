@@ -42,3 +42,4 @@ GIT_PS1_DESCRIBE_STYLE=branch
 #PS1='\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]$(__git_ps1)\$ '
 PS1='\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]$(__git_ps1 '\'' \[\033[36m\]%s\[\033[m\]'\'')\$ '
 
+[ -f ~/.bashrc.local ] && source ~/.bashrc.local
