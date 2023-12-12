@@ -21,6 +21,8 @@ unset bashrc_brew_prefix
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+[ -f ~/.cargo/env ] && source ~/.cargo/env
+
 alias grep='grep --color=auto'
 alias pwgen='pwgen --ambiguous --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
 
