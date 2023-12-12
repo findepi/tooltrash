@@ -9,9 +9,10 @@ if which brew >/dev/null; then
     # bash-completion v2
     [[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && source "$(brew --prefix)/etc/profile.d/bash_completion.sh"
 
-    if test "$(stat -f '%Su' "$(brew --prefix)/bin")" != "$(whoami)"; then
+    # MacOS `stat -f '%Su' <path>` or GNU `stat -c '%U' <path>` gives the owner
+    if test "$(/usr/bin/stat -f '%Su' "$(brew --prefix)/bin")" != "$(whoami)"; then
         # TODO don't invoke sudo for read-only stuff like `brew --prefix`
-        alias brew="sudo -Hu $(stat -f '%Su' "$(brew --prefix)/bin") brew"
+        alias brew="sudo -Hu $(/usr/bin/stat -f '%Su' "$(brew --prefix)/bin") brew"
     fi
 fi
 
