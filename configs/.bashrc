@@ -23,6 +23,11 @@ unset bashrc_brew_prefix
 
 [ -f ~/.cargo/env ] && source ~/.cargo/env
 
+if [ -d ~/.jenv/bin ] && which jenv 2>/dev/null; then
+    export PATH="$HOME/.jenv/bin:$PATH"
+    eval "$(jenv init -)"
+fi
+
 alias grep='grep --color=auto'
 alias pwgen='pwgen --ambiguous --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
 
