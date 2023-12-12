@@ -17,7 +17,7 @@ if bashrc_brew_prefix="$(brew --prefix 2>/dev/null)"; then
 fi
 unset bashrc_brew_prefix
 
-test -f ~/.iterm2_shell_integration.bash && source ~/.iterm2_shell_integration.bash
+[ -f ~/.iterm2_shell_integration.bash ] && source ~/.iterm2_shell_integration.bash
 
 alias grep='grep --color=auto'
 alias pwgen='pwgen --ambiguous --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
