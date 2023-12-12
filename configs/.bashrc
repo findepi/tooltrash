@@ -19,6 +19,8 @@ unset bashrc_brew_prefix
 
 [ -f ~/.iterm2_shell_integration.bash ] && source ~/.iterm2_shell_integration.bash
 
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
 alias grep='grep --color=auto'
 alias pwgen='pwgen --ambiguous --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
 
