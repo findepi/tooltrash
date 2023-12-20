@@ -23,7 +23,7 @@ unset bashrc_brew_prefix
 
 [ -f ~/.cargo/env ] && source ~/.cargo/env
 
-if [ -d ~/.jenv/bin ] && which jenv 2>/dev/null; then
+if [ -d ~/.jenv ] && which jenv >/dev/null; then
     export PATH="$HOME/.jenv/bin:$PATH"
     eval "$(jenv init -)"
 fi
