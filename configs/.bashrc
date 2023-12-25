@@ -14,6 +14,12 @@ if bashrc_brew_prefix="$(brew --prefix 2>/dev/null)"; then
         # TODO don't invoke sudo for read-only stuff like `brew --prefix`
         alias brew="sudo -Hu $(/usr/bin/stat -f '%Su' "${bashrc_brew_prefix}/bin") brew"
     fi
+
+    # TODO $PATH contents may get populated twice
+    for d in coreutils findutils gnu-sed gnu-tar gawk grep; do
+        test -d "${bashrc_brew_prefix}/opt/${d}/libexec/gnubin" && export PATH="${bashrc_brew_prefix}/opt/${d}/libexec/gnubin:$PATH"
+        test -d "${bashrc_brew_prefix}/opt/${d}/libexec/gnuman" && export MANPATH="${bashrc_brew_prefix}/opt/${d}/libexec/gnuman:${MANPATH}"
+    done
 fi
 unset bashrc_brew_prefix
 
