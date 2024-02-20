@@ -49,8 +49,8 @@
 #	pager = diff-so-fancy | less --tabs=4 -RFX
 [fetch]
 	prune = true
-[remote "origin"]
-	tagOpt = --tags
+#[remote "origin"]
+	#tagOpt = --tags
 [rerere]
 	enabled = 1
 [merge]
