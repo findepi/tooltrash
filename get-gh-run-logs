@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -x
+
+if [[ $# != 2 ]]; then
+    echo "Downloads logs from a GitHub Actions run and saves them to a director." >&2
+    echo "Usage `basename $0` owner/repo run" >&2
+    exit 1
+fi
+
+repo=$1
+run=$2
+
+target_dir="$run"_logs
+mkdir $target_dir
+
+for jobid in $(gh api --paginate repos/$repo/actions/runs/$run/jobs |jq '.jobs[].id'); do
+  gh api repos/$repo/actions/jobs/$jobid/logs > $target_dir/$jobid.log
+done
