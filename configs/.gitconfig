@@ -19,7 +19,6 @@
 	cpi = cherry-pick -X ignore-all-space
 	dc = diff --cached
 	di = diff
-	edit = "!sh -c 'GIT_SEQUENCE_EDITOR=\"sed -i -e \\\"1 s/pick/edit/\\\"\" git rebase --no-autosquash -i `git rev-parse $0`^'"
 	fetch = fetch --prune
 	fpr = ! git fetch origin \"pull/$1/head\" && :
 	git = "!git"

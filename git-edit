@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -euo pipefail
+
+commit="$1"
+GIT_SEQUENCE_EDITOR="sed -i -e \"1 s/pick/edit/\"" git rebase --no-autosquash -i "$(git rev-parse "${commit}")^"
