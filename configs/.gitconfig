@@ -28,6 +28,7 @@
 	pushbranch = ! git -c push.default=simple push
 	rb = rebase
 	rbi = rebase -i
+	ret = rebase --edit-todo
 	rc = ! env EDITOR=: git rebase --continue
 	showr = show --notes=refs/notes/review
 	shfr = show --pretty=fuller
