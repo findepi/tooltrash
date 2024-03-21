@@ -3,4 +3,10 @@
 set -euo pipefail
 
 commit="$1"
+
+if ! test $(git log -1 "HEAD..${commit}" | wc -l) = 0; then
+    echo "Commit ${commit} is not an ancestor of HEAD, sorry." >&2
+    exit 1
+fi
+
 GIT_SEQUENCE_EDITOR="sed -i -e \"1 s/pick/edit/\"" git rebase --no-autosquash -i "$(git rev-parse "${commit}")^"
