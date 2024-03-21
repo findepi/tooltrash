@@ -42,7 +42,7 @@
 [diff]
 	noprefix = true
 [rebase]
-	autosquash = yes
+	autosquash = no
 [push]
 	default = nothing
 [core]
