@@ -82,7 +82,7 @@ commit_slug="$( git log -1 --pretty="%s" ${commits} \
 
 source_hash="$(echo "${commits}" | sha1sum | cut -c 1-6)"
 
-if test "${branch}" = "master"; then
+if test "${branch}" = "${default_branch}"; then
     branch_qualifier=""
 else
     branch_qualifier="${branch}/"
@@ -93,7 +93,7 @@ github_url="$(git remote get-url "${origin}" \
     | $sed 's#\.git$##' \
     | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
-if "${same_origin}" || test "${branch}" != "master"; then
+if "${same_origin}" || test "${branch}" != "${default_branch}"; then
     github_url="${github_url}/compare/${branch}...${new_branch_name}?expand=1"
 else
     github_url="${github_url}/compare/${new_branch_name}?expand=1"
