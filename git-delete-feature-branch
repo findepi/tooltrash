@@ -12,7 +12,7 @@ ex() {
 
 branch="$(git symbolic-ref HEAD)"
 remote="$(git config "branch.$(sed 's@^refs/heads/@@' <<< "$branch").remote")"
-default_branch="$(git config --default master --get findepi.default-branch)"
+default_branch="$(git master)"
 
 ex git push "$remote" --delete "$branch"
 ex git checkout "${default_branch}"

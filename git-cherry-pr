@@ -48,7 +48,7 @@ if ! test $# -ge 1 -a $# -le 2; then
 fi
 
 commits="$(git rev-parse "$1")"
-default_branch="$(git config --default master --get findepi.default-branch)"
+default_branch="$(git master)"
 branch="${2-${default_branch}}"
 private_branch_prefix="$(git config findepi.private-branch-prefix || echo "$(whoami)/")"
 

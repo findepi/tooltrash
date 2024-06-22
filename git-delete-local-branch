@@ -4,7 +4,7 @@ set -euo pipefail
 
 branch="$(git symbolic-ref --short HEAD)"
 head="$(git rev-parse HEAD)"
-default_branch="$(git config --default master --get findepi.default-branch)"
+default_branch="$(git master)"
 
 local_commits="$(git log HEAD --not --remotes --oneline | wc -l)"
 

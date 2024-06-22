@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Guess the name of the main branch
+
+set -euo pipefail
+
+default_branch_config="findepi.default-branch"
+
+if main="$(git config --get "${default_branch_config}")"; then
+    echo "${main}"
+    exit 0
+fi
+
+master_exits=false
+main_exits=false
+git rev-parse --quiet --verify master >/dev/null && master_exits=true
+git rev-parse --quiet --verify main >/dev/null && main_exits=true
+
+if "${master_exits}" && "${main_exits}"; then
+    echo "Both 'master' and 'main' branches exist. The main branch needs to be configured" >&2
+    echo "explicitly with 'git config ${default_branch_config} main-branch-name." >&2
+    exit 1
+fi
+
+if "${master_exits}"; then 
+    echo "master"
+    exit 0
+fi
+
+if "${main_exits}"; then 
+    echo "main"
+    exit 0
+fi
+
+echo "None of 'master' and 'main' branches exists. The main branch needs to be configured" >&2
+echo "explicitly with 'git config ${default_branch_config} main-branch-name." >&2
+exit 1
