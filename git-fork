@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Fork a GitHub repo and create a local clone.
+
+set -euo pipefail
+
+err() {
+    set +x # because `set -x` is currently in use
+    echo "$@" >&2
+    exit 1
+}
+
+# because we don't validate params and everything is experimental
+set -x
+
+upstream_url="$1"
+expected_clone_dir="${upstream_url/*\//}"
+
+test -e "${expected_clone_dir}" && err "File or directory ${expected_clone_dir} already exists."
+gh repo fork --clone "${upstream_url}"
+test -d "${expected_clone_dir}" || err "Directory ${expected_clone_dir} has not been created."
+
+cd "${expected_clone_dir}"
+main_branch="$(git master)"
+git config "branch.${main_branch}.remote" upstream
