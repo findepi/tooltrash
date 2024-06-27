@@ -19,7 +19,7 @@ unset bashrc_brew_prefix
 
 [ -f ~/.iterm2_shell_integration.bash ] && source ~/.iterm2_shell_integration.bash
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+which fzf >/dev/null && eval "$(fzf --bash)"
 
 [ -f ~/.cargo/env ] && source ~/.cargo/env
 
