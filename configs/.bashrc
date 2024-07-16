@@ -28,6 +28,8 @@ if [ -d ~/.jenv ] && which jenv >/dev/null; then
     eval "$(jenv init -)"
 fi
 
+[ -d ~/Library/Application\ Support/JetBrains/Toolbox/scripts ] && PATH="$PATH":~/Library/Application\ Support/JetBrains/Toolbox/scripts
+
 alias grep='grep --color=auto'
 alias pwgen='pwgen --ambiguous --capitalize --secure --symbols -r '\\\'\''`*&@|"<>!\:[]=(){}#%^,$;?'\'' 20'
 
