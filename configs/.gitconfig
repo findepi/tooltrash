@@ -20,7 +20,6 @@
 	dc = diff --cached
 	di = diff
 	fetch = fetch --prune
-	fpr = ! git fetch origin \"pull/$1/head\" && :
 	git = "!git"
 	lg = log --pretty=tformat:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative
 	llg = locallog

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -eu
+
+if [ $# -ne 1 ] && [ $# -ne 2 ]; then
+    echo "Usage: $(basename $0) [ <remote> ] <pr-number>" >&2
+    exit 1
+fi
+
+if [ $# -eq 2 ]; then
+	remote="$1"
+	pr="$2"
+
+elif [ $# -eq 1 ]; then
+	pr="$1"
+
+	# find default remote used by gh
+	if ! gh_remote=$(git config --local --get-regexp '^remote\.[^.]+\.gh-resolved$' | grep ' base$'); then
+		{
+			echo "No default repo set for fetching PRs."
+			echo "Try"
+			echo "    $(basename $0) <remote> ${pr}"
+			echo "Or configure default remote using GitHub CLI"
+			echo "    gh repo set-default"
+			echo "and try again."
+		} >&2
+		exit 2
+	fi
+	remote=$(echo "${gh_remote}" | sed -n 's/remote\.\([^.]\+\)\..*/\1/p')
+
+else
+    echo "Usage: $(basename $0) [ <remote> ] <pr-number>" >&2
+    exit 1
+fi
+
+exec git fetch "${remote}" "pull/${pr}/head"
