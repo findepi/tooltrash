@@ -32,7 +32,7 @@ is-jetbrains-enlisted() {
             if cat "${recent_projects}" | \
                 xq -x '/application/component[@name="RecentProjectsManager"]/option[@name="additionalInfo"]/map/entry/@key' \
                 | sed  "s:\\\$USER_HOME\\\$:${HOME}:g" \
-                | grep -x -F "${project_dir}"; then
+                | grep -x -F -e "${project_dir}"; then
                 return 0
             fi
         fi
