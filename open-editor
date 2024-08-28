@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+# Helper to open files from iTerm's "Semantic History"
+
+# iTerm runs with MacOS's default bash (bash 3.x} because login shell ($SHELL}
+# may not be on the $PATH. Switch to $SHELL.
+if [[ -n ${BASH} && -n ${SHELL} && ${BASH} != ${SHELL} ]]; then
+    exec "${SHELL}" -l "$0" "$@"
+fi
+
+set -xeuo pipefail
+
+# parse the args -- simulate named parameters
+if [[ $# -gt 0 ]]; then
+    declare "$@"
+fi
+
+# validate the args (thanks to `set -u`)
+echo "pwd=${pwd}"
+echo "file=${file}"
+echo "line=${line}"
+echo "column=${column}"
+
+is-jetbrains-enlisted() {
+    local project_dir="$1"
+    local app_name="$2"
+
+    for recent_projects in "${HOME}/Library/Application Support/JetBrains/${app_name}"*"/options/recentProjects.xml"; do
+        if [[ -f ${recent_projects} ]]; then
+            echo "recent_projects=$recent_projects"
+
+            if cat "${recent_projects}" | \
+                xq -x '/application/component[@name="RecentProjectsManager"]/option[@name="additionalInfo"]/map/entry/@key' \
+                | sed  "s:\\\$USER_HOME\\\$:${HOME}:g" \
+                | grep -x -F "${project_dir}"; then
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
+
+parent_dir="$(cd "${pwd}"; pwd)"
+while [[ "${parent_dir}" != "/" ]]; do
+    if [[ -d "${parent_dir}/.idea" ]]; then
+        jetbrains_project_dir="${parent_dir}"
+        break
+    fi
+    parent_dir=$(cd "${parent_dir}/.."; pwd)
+done
+
+if [[ -v jetbrains_project_dir ]]; then
+    jetbrains_app=""
+    if is-jetbrains-enlisted "${jetbrains_project_dir}" RustRover; then
+        jetbrains_app="rustrover"
+    elif is-jetbrains-enlisted "${jetbrains_project_dir}" IdeaIC; then
+        jetbrains_app="idea"
+    elif is-jetbrains-enlisted "${jetbrains_project_dir}" PyCharmCE; then
+        jetbrains_app="pycharm"
+    fi
+    if [[ -n $jetbrains_app ]]; then
+        # When you rename the project within the IDE, Toolbox will display the
+        # new name, but the jetbrains:// won't accept it. It apparently has to
+        # be the base dir name.
+        project="$(basename "$jetbrains_project_dir")"
+        # https://youtrack.jetbrains.com/issue/IJPL-59699/JetBrains-protocol-handler-opens-file-at-incorrect-position-1-line
+        jetbrains_line=$[line - 1]
+        if open "jetbrains://${jetbrains_app}/navigate/reference?project=${project}&path=${file}:${jetbrains_line}:${column}"; then
+            exit
+        fi
+    fi
+fi
+
+# fallback
+# TODO: when Semantic History handler is not configured, iTerm can sometimes
+# open the default app at the right line (e.g. VS Code or MacVim). Our fallback
+# is inferior.
+cd "${pwd}"
+exec open "${file}"
