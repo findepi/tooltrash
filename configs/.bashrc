@@ -19,6 +19,11 @@ if bashrc_brew_prefix="$(brew --prefix 2>/dev/null)"; then
     test -d NVM_DIR="$HOME/.nvm" && export NVM_DIR="$HOME/.nvm"
     [ -s "${bashrc_brew_prefix}/opt/nvm/nvm.sh" ] && source "${bashrc_brew_prefix}/opt/nvm/nvm.sh"  # This loads nvm
     [ -s "${bashrc_brew_prefix}/opt/nvm/etc/bash_completion.d/nvm" ] && source "${bashrc_brew_prefix}/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+    # libpq
+    test -d "${bashrc_brew_prefix}/opt/libpq/bin" && export PATH="${bashrc_brew_prefix}/opt/libpq/bin:$PATH"
+    test -d "${bashrc_brew_prefix}/opt/libpq/lib" && export LDFLAGS="-L${bashrc_brew_prefix}/opt/libpq/lib"
+    test -d "${bashrc_brew_prefix}/opt/libpq/include" && export CPPFLAGS="-I${bashrc_brew_prefix}/opt/libpq/include"
 fi
 unset bashrc_brew_prefix
 
