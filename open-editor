@@ -8,6 +8,9 @@ if [[ -n ${BASH} && -n ${SHELL} && ${BASH} != ${SHELL} ]]; then
     exec "${SHELL}" -l "$0" "$@"
 fi
 
+# Debug mode when script doesn't work correctly and doesn't fail either.
+#exec &> /tmp/open-editor.debug.txt
+
 set -xeuo pipefail
 
 # parse the args -- simulate named parameters
@@ -63,9 +66,13 @@ if [[ -v jetbrains_project_dir ]]; then
         # new name, but the jetbrains:// won't accept it. It apparently has to
         # be the base dir name.
         project="$(basename "$jetbrains_project_dir")"
+        # $line and $column are optional. jetbrains:// will jump to beginning of the file even if the file is already opened and scrolled down
+        # so there is no point in differentiating between line/column being known 1:0 abd line/column being unknown
+        jetbrains_line="${line:-1}"
+        jetbrains_column="${column:-0}"
         # https://youtrack.jetbrains.com/issue/IJPL-59699/JetBrains-protocol-handler-opens-file-at-incorrect-position-1-line
-        jetbrains_line=$[line - 1]
-        if open "jetbrains://${jetbrains_app}/navigate/reference?project=${project}&path=${file}:${jetbrains_line}:${column}"; then
+        jetbrains_line="$[jetbrains_line - 1]"
+        if open "jetbrains://${jetbrains_app}/navigate/reference?project=${project}&path=${file}:${jetbrains_line}:${jetbrains_column}"; then
             exit
         fi
     fi
