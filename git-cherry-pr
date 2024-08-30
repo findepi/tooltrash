@@ -12,6 +12,10 @@ usage() {
 }
 
 same_origin=false
+
+# Which remote to create the new branch in.
+# Note that this may be the same as or different from the upstream remote of
+# the source branch we cherry pick onto.
 origin=origin
 
 while getopts "hor:" opt "$@"; do
@@ -49,6 +53,12 @@ fi
 
 commits="$(git rev-parse "$1")"
 default_branch="$(git master)"
+
+# The name of the branch we cherry pick onto. It may or may not exist locally.
+# When it exists locally, it's upstream state (remote and current upstream
+# commit) are taken into account. Thus, it is not needed to sync main/master
+# branch state into own fork as long as the main/master branch is configured to
+# pull from upstream.
 branch="${2-${default_branch}}"
 private_branch_prefix="$(git config findepi.private-branch-prefix || echo "$(whoami)/")"
 
@@ -99,11 +109,15 @@ else
     github_url="${github_url}/compare/${new_branch_name}?expand=1"
 fi
 
+if ! base_commit=$(git rev-parse --symbolic "${branch}@{u}" 2>/dev/null); then
+    base_commit="${origin}/${branch}"
+fi
+
 # Now we must print everything we do. In case of failure, user might want to
 # know how to rollback.
 set -x
 
-git checkout "${origin}/${branch}" \
+git checkout "${base_commit}" \
     && git cherry-pick ${commits} \
     && git push "${origin}" "HEAD:refs/heads/${new_branch_name}" \
     && $open "${github_url}" \
