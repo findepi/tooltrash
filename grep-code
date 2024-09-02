@@ -14,7 +14,7 @@ clear=clear
 
 truncatelonglines() {
     # Run `sed` to truncate lines using normal $LANG settings (presumably
-    # something with UTF-8?). However, this may file if file contains illegal
+    # something with UTF-8?). However, this may fail if file contains illegal
     # byte sequences. In this case nothing will be truncated, so truncate once
     # again -- this time do it byte-wise (LANG=C) but with higher limit.
     #
