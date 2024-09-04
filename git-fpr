@@ -14,8 +14,15 @@ if [ $# -eq 2 ]; then
 elif [ $# -eq 1 ]; then
 	pr="$1"
 
+        # maybe there is just one remote
+        if [[ $(git remote | wc -l) -eq 1 ]]; then
+            remote="$(git remote)"
+
 	# find default remote used by gh
-	if ! gh_remote=$(git config --local --get-regexp '^remote\.[^.]+\.gh-resolved$' | grep ' base$'); then
+	elif gh_remote=$(git config --local --get-regexp '^remote\.[^.]+\.gh-resolved$' | grep ' base$'); then
+            remote=$(echo "${gh_remote}" | sed -n 's/remote\.\([^.]\+\)\..*/\1/p')
+
+        else
 		{
 			echo "No default repo set for fetching PRs."
 			echo "Try"
@@ -26,7 +33,6 @@ elif [ $# -eq 1 ]; then
 		} >&2
 		exit 2
 	fi
-	remote=$(echo "${gh_remote}" | sed -n 's/remote\.\([^.]\+\)\..*/\1/p')
 
 else
     echo "Usage: $(basename $0) [ <remote> ] <pr-number>" >&2
