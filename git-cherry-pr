@@ -8,22 +8,29 @@ err() {
 }
 
 usage() {
-    echo "Usage: $0 [-o | -r remote] <committish> [<remote upstream branch>]" >&2
+    echo "Usage: $0 [-o | -r remote | -t remote] <committish> [<remote upstream branch>]" >&2
 }
 
-same_origin=false
-origin=origin
+same_pr_remote=false
+pr_remote=my
+target_remote=origin
+stay_on_branch=false
 
-while getopts "hor:" opt "$@"; do
+while getopts "hor:t:s" opt "$@"; do
     case "${opt}" in
         o)
             # Use same remote as the origin of the upstream branch
-            same_origin=true
-            origin=
+            same_pr_remote=true
+            pr_remote=
             ;;
         r)
-            # Use specified remote
-            origin="${OPTARG}"
+            pr_remote="${OPTARG}"
+            ;;
+        t)
+            target_remote="${OPTARG}"
+            ;;
+        s)
+            stay_on_branch=true
             ;;
         h)
             usage
@@ -64,12 +71,12 @@ git diff-files --exit-code --ignore-submodules -- \
 git diff-index --exit-code --cached HEAD --ignore-submodules -- \
     || err "There are staged but not committed changes"
 
-if test "${origin}" = ""; then
+if test "${pr_remote}" = ""; then
     # We need to determine origin from branch name.
     # First, try to read from local branch configuration, if that exists.
-    if ! origin="$(git config "branch.${branch}.remote")"; then
+    if ! pr_remote="$(git config "branch.${branch}.remote")"; then
         # Second, check existing remote branches
-        if ! origin="$(git branch -r | $sed 's/^\s\+//' | grep "^\([-a-z]\+\)/${branch}\$" | cut -d/ -f1)"; then
+        if ! pr_remote="$(git branch -r | $sed 's/^\s\+//' | grep "^\([-a-z]\+\)/${branch}\$" | cut -d/ -f1)"; then
             err "Failed to find remote for branch ${branch}"
         fi
     fi
@@ -89,11 +96,11 @@ else
 fi
 new_branch_name="${private_branch_prefix}${branch_qualifier}${commit_slug}-${source_hash}"
 
-github_url="$(git remote get-url "${origin}" \
+github_url="$(git remote get-url "${pr_remote}" \
     | $sed 's#\.git$##' \
     | $sed 's#^git@\([^:]\+\):#https://\1/#' `# support git and https clone URLs`
 )"
-if "${same_origin}" || test "${branch}" != "master"; then
+if "${same_pr_remote}" || test "${branch}" != "master"; then
     github_url="${github_url}/compare/${branch}...${new_branch_name}?expand=1"
 else
     github_url="${github_url}/compare/${new_branch_name}?expand=1"
@@ -103,8 +110,16 @@ fi
 # know how to rollback.
 set -x
 
-git checkout "${origin}/${branch}" \
+git checkout "${target_remote}/${branch}" \
     && git cherry-pick ${commits} \
-    && git push "${origin}" "HEAD:refs/heads/${new_branch_name}" \
-    && $open "${github_url}" \
-    && git checkout -
+    && git push "${pr_remote}" "HEAD:refs/heads/${new_branch_name}" \
+    && $open "${github_url}"
+
+if [[ $stay_on_branch == "true" ]];then
+  git checkout ${new_branch_name}
+else 
+  git checkout -
+fi
+
+
+
