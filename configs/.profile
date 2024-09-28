@@ -9,8 +9,8 @@ export PATH=~/bin:~/bin/tools:"$PATH"
 export EDITOR=vim
 
 # Default on Mac is not generous enough
-if [ $(ulimit -n) -lt 2048 ]; then
-    ulimit -n 2048
+if [ $(ulimit -n) -lt 4096 ]; then
+    ulimit -n 4096
 fi
 
 # Default on Mac is not generous enough
