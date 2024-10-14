@@ -43,6 +43,7 @@
 	autosquash = no
 [push]
 	default = nothing
+	useForceIfIncludes = true
 [core]
 	excludesfile = ~/.gitignore
 #	pager = diff-so-fancy | less --tabs=4 -RFX
