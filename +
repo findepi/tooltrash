@@ -1,3 +1,9 @@
 #!/bin/bash
-echo "+ $(printf '%q ' "$@" | sed 's/ $//')" >&2
+RED=""
+NORMAL=""
+if test -t 2; then 
+    RED=$(tput setaf 1)
+    NORMAL=$(tput sgr0)
+fi
+echo "${RED}+ $(printf '%q ' "$@" | sed 's/ $//')${NORMAL}" >&2
 exec "$@"
