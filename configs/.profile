@@ -14,4 +14,4 @@ if [ $(ulimit -n) -lt 8012 ]; then
 fi
 
 # Default on Mac is not generous enough
-export RUST_MIN_STACK=$[8 * 1024 * 1024]
+export RUST_MIN_STACK=$[16 * 1024 * 1024]
