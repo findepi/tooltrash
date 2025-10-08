@@ -29,6 +29,8 @@ unset bashrc_brew_prefix
 
 [ -f ~/.iterm2_shell_integration.bash ] && source ~/.iterm2_shell_integration.bash
 
+source ~/.orbstack/shell/init.bash 2>/dev/null || :
+
 which fzf >/dev/null && eval "$(fzf --bash)"
 
 [ -f ~/.cargo/env ] && source ~/.cargo/env
