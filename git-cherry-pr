@@ -60,7 +60,7 @@ default_branch="$(git master)"
 # branch state into own fork as long as the main/master branch is configured to
 # pull from upstream.
 branch="${2-${default_branch}}"
-private_branch_prefix="$(git config findepi.private-branch-prefix || echo "$(whoami)/")"
+private_branch_prefix="$(git config get --default "$(whoami)/" findepi.private-branch-prefix)"
 
 sed="$(find-cmd gsed sed)"
 open="$(find-cmd xdg-open open)"
