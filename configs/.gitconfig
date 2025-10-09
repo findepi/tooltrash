@@ -60,3 +60,5 @@
 	follow = true
 [advice]
 	skippedCherryPicks = false
+[findepi]
+	private-branch-prefix = findepi/
