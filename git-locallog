@@ -3,4 +3,4 @@
 private_branch_prefix="$(git config get --default "$(whoami)/" findepi.private-branch-prefix)"
 exec git \
     log --graph --pretty=format:'%Cred%h%Creset - %s %Cgreen(%cr) %C(bold blue)<%an>%Creset%C(yellow)%d%Creset' --abbrev-commit --date=relative \
-    HEAD --not --exclude "*/${private_branch_prefix}/**" --remotes "$@"
+    HEAD --not --exclude "*/${private_branch_prefix}*" --remotes "$@"
