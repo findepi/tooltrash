@@ -56,6 +56,8 @@ if [[ -v jetbrains_project_dir ]]; then
     jetbrains_app=""
     if is-jetbrains-enlisted "${jetbrains_project_dir}" RustRover; then
         jetbrains_app="rustrover"
+    elif is-jetbrains-enlisted "${jetbrains_project_dir}" IntelliJIdea; then
+        jetbrains_app="idea"
     elif is-jetbrains-enlisted "${jetbrains_project_dir}" IdeaIC; then
         jetbrains_app="idea"
     elif is-jetbrains-enlisted "${jetbrains_project_dir}" PyCharmCE; then
@@ -65,13 +67,20 @@ if [[ -v jetbrains_project_dir ]]; then
         # When you rename the project within the IDE, Toolbox will display the
         # new name, but the jetbrains:// won't accept it. It apparently has to
         # be the base dir name.
-        project="$(basename "$jetbrains_project_dir")"
+        project="$(basename "${jetbrains_project_dir}")"
         # $line and $column are optional. jetbrains:// will jump to beginning of the file even if the file is already opened and scrolled down
         # so there is no point in differentiating between line/column being known 1:0 abd line/column being unknown
         jetbrains_line="${line:-1}"
         jetbrains_column="${column:-0}"
         # https://youtrack.jetbrains.com/issue/IJPL-59699/JetBrains-protocol-handler-opens-file-at-incorrect-position-1-line
         jetbrains_line="$[jetbrains_line - 1]"
+        
+        # First try to open with PATH-installed executable such as `idea`. It seems to be more robust.
+        # Passing project dir path is required to prevent the IDE from renaming the project to the filename, if project was not opened yet.
+        if "${jetbrains_app}" "${jetbrains_project_dir}" -l "${jetbrains_line}" -c "${jetbrains_column}" "${file}"; then
+            exit
+        fi
+
         if open "jetbrains://${jetbrains_app}/navigate/reference?project=${project}&path=${file}:${jetbrains_line}:${jetbrains_column}"; then
             exit
         fi
