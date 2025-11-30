@@ -18,3 +18,10 @@ tempto-configuration-local.yaml
 
 # a Mac thing
 .DS_Store
+
+# Claude Code configuration
+.claude/
+**/.claude/settings.local.json
+
+# Gemini configuration folder
+.gemini/
