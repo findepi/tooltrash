@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if test -t 2; then
+    GREEN='\033[0;32m'
+    RED='\033[0;31m'
+    NC='\033[0m' # No Color
+else
+    GREEN=''
+    RED=''
+    NC=''
+fi
+
+stderr_green() {
+    echo -e "${GREEN}$*${NC}" >&2
+}
+stderr_red() {
+    echo -e "${RED}$*${NC}" >&2
+}
+
+pr="$1"; shift
+
+# Retries are to cope with transient GitHub API errors
+failures=0
+while test "${failures}" -lt 5; do
+    # TODO --fail-fast could be optional. But then we need to be smarter about
+    #  retries. During a very long build we can easily get 5 netwrok
+    #  disconnects. Perhaps we examine JSON output and thus tell apart gh
+    #  failures and build failures.
+    if stderr=$(gh pr checks "${pr}" --watch --fail-fast 3>&1 1>&2 2>&3 3>&- | tee /dev/fd/2); then
+        # It is possible that some checks did succeed (e.g. PR labeler), but
+        # other checks (e.g. main CI flow) did not even start. In such case,
+        # `gh pr checks --wait` will still complete with success, while the
+        # "main build didn't even start".
+        #
+        # If the non-started checks are not required, there is little we can do
+        # about this. From our perspective, they don't exist.
+        #
+        # If the non-started checks are required, we could use `gh pr checks
+        # --required` to check for ... one of them. This would work if only one
+        # check is required.
+        #
+        # Let's inspect whether PR is mergeable instead.
+        if pr_merge_status=$(gh pr view 3514 --json 'mergeStateStatus' --jq '.mergeStateStatus'); then
+            if test "${pr_merge_status}" = "CLEAN"; then
+                stderr_green "Checks for ${pr} succeeded"
+                exit 0
+            fi
+            stderr_red "Some checks for ${pr} succeeded, but PR merge status is ${pr_merge_status}."
+            stderr_red "It is assumed that this means the required checks did not complete, or even start."
+            # Treat this same as the case when checks not started yet at all.
+            failures=0
+            sleep 10
+            continue
+        fi
+    fi
+    if echo "${stderr}" | grep -qE 'no checks reported on '; then
+        stderr_red "Checks for ${pr} not started yet"
+        # Initial checks can be arbitraily delayed. When we're in this
+        # situation, we simply need to wait until they start.
+        failures=0
+        sleep 10
+        continue
+    fi
+
+    stderr_red "Checks for ${pr} failed. Or GitHub API call failed."
+    failures=$[failures+1]
+    # Sleep before retrying
+    sleep 3
+done
+
+stderr_red "Checks for ${pr} still did not succeed. They probably really failed."
+exit 1
