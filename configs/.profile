@@ -4,7 +4,9 @@
 test -d "/opt/homebrew/sbin" && PATH="/opt/homebrew/sbin:$PATH"
 test -d "/opt/homebrew/bin" && PATH="/opt/homebrew/bin:$PATH"
 
-export PATH=~/bin:~/bin/tools:"$PATH"
+test -d ~/bin/tools && PATH=~/bin/tools:"$PATH"
+test -d ~/bin && PATH=~/bin:"$PATH"
+test -d ~/.local/bin && PATH=~/.local/bin:"$PATH"
 
 export EDITOR=vim
 
