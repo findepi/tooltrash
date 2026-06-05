@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 # Shim for https://pypi.org/project/cloudvm
-# --quiet to suppress "is already on your PATH and installed at ... Downloading and running anyway." warning
-exec pipx run --quiet cloudvm "$@"
+# Uses uvx (not `pipx run`) because pipx is itself argcomplete-aware intercepts
+# _ARGCOMPLETE.
+exec uvx cloudvm "$@"

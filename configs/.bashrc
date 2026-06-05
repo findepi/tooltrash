@@ -40,6 +40,14 @@ if [ -d ~/.jenv ] && which jenv >/dev/null; then
     eval "$(jenv init -)"
 fi
 
+if which cloudvm >/dev/null; then
+    _cloudvm_lazy_complete() {
+        eval "$(cloudvm --print-completion bash 2>/dev/null)"
+        return 124
+    }
+    complete -F _cloudvm_lazy_complete cloudvm
+fi
+
 [ -d ~/Library/Application\ Support/JetBrains/Toolbox/scripts ] && PATH="$PATH":~/Library/Application\ Support/JetBrains/Toolbox/scripts
 
 alias grep='grep --color=auto'
