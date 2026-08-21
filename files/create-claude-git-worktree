@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+#
+# create-claude-git-worktree — Claude Code `WorktreeCreate` hook.
+#
+# A `WorktreeCreate` hook REPLACES Claude Code's built-in `git worktree add`. This script
+# reproduces that default creation, then — for Maven projects only — runs the sibling
+# `isolate-maven-workspace` inside the new worktree so it gets its own isolated local repo.
+# Non-Maven projects just get the plain default worktree, so this is safe to install globally.
+#
+# Install in ~/.claude/settings.json (user-wide) or a project .claude/settings.json:
+#
+#   {
+#     "hooks": {
+#       "WorktreeCreate": [
+#         { "hooks": [
+#             { "type": "command",
+#               "command": "$HOME/bin/tools/files/create-claude-git-worktree" }
+#         ] }
+#       ]
+#     }
+#   }
+#
+# Output contract: on success exit 0 and print the created worktree's absolute path to STDOUT —
+# the bare path, NOT a JSON envelope (Claude Code's WorktreeCreate schema rejects hookSpecificOutput
+# for this event; verified empirically). All other output goes to stderr to keep stdout clean.
+# Any non-zero exit ABORTS worktree creation, so the Maven step below is deliberately non-fatal.
+#
+# Requires: jq, and the sibling `isolate-maven-workspace`.
+
+set -euo pipefail
+
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo="${CLAUDE_PROJECT_DIR:-$PWD}"
+
+payload="$(cat)"
+worktree_path="$(jq -r '.worktree_path // empty' <<<"$payload")"
+worktree_name="$(jq -r '.worktree_name // .name // "worktree"' <<<"$payload")"
+base_ref="$(jq -r '.base_ref // "HEAD"' <<<"$payload")"
+
+# Fallback if the payload lacks a path (field-name drift): reproduce the documented default.
+[ -n "$worktree_path" ] || worktree_path="$repo/.claude/worktrees/$worktree_name"
+
+# Step A — reproduce Claude's default creation: new branch off base_ref, at the given path.
+# git's stdout is redirected to stderr so it never contaminates the hook's stdout contract.
+git -C "$repo" worktree add -b "worktree-$worktree_name" "$worktree_path" "$base_ref" 1>&2
+
+# Step B — our custom step: isolate the Maven local repo, Maven projects only.
+# Non-fatal: a failure here must NOT abort the (already done) worktree creation.
+if [ -f "$worktree_path/pom.xml" ]; then
+  ( cd "$worktree_path" && "$here/isolate-maven-workspace" ) 1>&2 ||
+    echo "create-claude-git-worktree: maven isolation failed (worktree still created)" >&2
+fi
+
+# Step C — report the created worktree to Claude: the bare absolute path on stdout.
+# NOT a JSON envelope — Claude Code's WorktreeCreate output schema rejects hookSpecificOutput
+# for this event (verified empirically); the plain path is the contract.
+printf '%s\n' "$worktree_path"

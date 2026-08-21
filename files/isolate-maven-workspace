@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+#
+# isolate-maven-workspace — give the current working dir its own isolated Maven local repo.
+#
+# Run once from inside any checkout — a clone or a worktree
+# It isolates that checkout's installs while sharing the download cache with
+# every other isolated checkout. Parallel workspaces can `mvn install`
+# independently without cloberring or even seeing each other's jars. 
+# Deleting a worktree deletes all locally built jars along the way.
+#
+# Configures Maven resolver to use:
+#   <workspace>/.mvn-repo/installed/     for local installs
+#   ~/.m2/repository/remote-cache        for dependencies downloaded
+#   ~/.m2/repository/.locks              for lock dir
+#
+# Requires Maven 3.9+ (uses ${session.rootDirectory}).
+# Requires working dir to be tracked in git
+
+set -euo pipefail
+
+err() { printf 'error: %s\n' "$*" >&2; exit 1; }
+
+[ $# -gt 0 ] && err "unexpected arguments: $*"
+
+# Verify git, as we mask temporary changes with git
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || err "run this inside a git checkout"
+
+workspace_root="$(git rev-parse --show-toplevel)"
+user_repository="$HOME/.m2/repository"
+shared_cache="$user_repository/remote-cache"
+shared_locks="$user_repository/.locks"
+
+# One-time global setup
+mkdir -p "$shared_cache"
+mkdir -p "$shared_locks"
+
+mkdir -p "$workspace_root/.mvn-repo/installed"
+
+# Note:
+#   We can use ~/.m2/repository (flat) as shared cache. This would work, but
+#   unisolated `mvn install` would then "leak" into (be visible by) isolated
+#   workspace.
+# Note: 
+#   As a result of shared cache being != ~/.m2/repository, eventually all the
+#   dependencies will be downloaded twice. Duplicates can be deduplicated from
+#   time to time with:
+#     jdupes --linkhard --recurse --extfilter onlyext:jar ~/.m2/repository
+ln -sfn "$shared_cache" "$workspace_root/.mvn-repo/remote-cache"
+ln -sfn "$shared_locks" "$workspace_root/.mvn-repo/.locks"
+
+mkdir -p "$workspace_root/.mvn"
+maven_config="$workspace_root/.mvn/maven.config"
+
+# Bail if maven.config is already tracked with uncommitted changes
+git -C "$workspace_root" ls-files --error-unmatch .mvn/maven.config >/dev/null 2>&1 &&
+    [ -n "$(git -C "$workspace_root" status --porcelain -- .mvn/maven.config)" ] &&
+    err ".mvn/maven.config is tracked and has uncommitted changes; commit or stash them first"
+
+grep -q 'enhancedLocalRepository\.split' "$maven_config" 2>/dev/null &&
+   err "enhancedLocalRepository.split already configured in $maven_config"
+
+cat >>"$maven_config" <<EOF
+-Dmaven.repo.local=\${session.rootDirectory}/.mvn-repo
+-Daether.enhancedLocalRepository.split=true
+-Daether.enhancedLocalRepository.remotePrefix=remote-cache
+-Daether.enhancedLocalRepository.localPrefix=installed
+-Daether.syncContext.named.basedir.locksDir=.locks
+EOF
+
+# Tell git to ignore this edit if $maven_config is tracked
+if git -C "$workspace_root" ls-files --error-unmatch .mvn/maven.config >/dev/null 2>&1; then
+  git -C "$workspace_root" update-index --skip-worktree .mvn/maven.config
+fi
+
+echo "done: $workspace_root/.mvn-repo (installs local; downloads -> $shared_cache)"
