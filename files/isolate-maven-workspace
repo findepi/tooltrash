@@ -44,7 +44,8 @@ mkdir -p "$workspace_root/.mvn-repo/installed"
 #   As a result of shared cache being != ~/.m2/repository, eventually all the
 #   dependencies will be downloaded twice. Duplicates can be deduplicated from
 #   time to time with:
-#     jdupes --linkhard --recurse --extfilter onlyext:jar ~/.m2/repository
+#     brew install jdupes &&
+#     jdupes --link-hard --recurse --ext-filter onlyext:jar ~/.m2/repository
 ln -sfn "$shared_cache" "$workspace_root/.mvn-repo/remote-cache"
 ln -sfn "$shared_locks" "$workspace_root/.mvn-repo/.locks"
 
