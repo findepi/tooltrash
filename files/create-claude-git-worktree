@@ -42,7 +42,8 @@ base_ref="$(jq -r '.base_ref // "HEAD"' <<<"$payload")"
 
 # Step A — reproduce Claude's default creation: new branch off base_ref, at the given path.
 # git's stdout is redirected to stderr so it never contaminates the hook's stdout contract.
-git -C "$repo" worktree add -b "worktree-$worktree_name" "$worktree_path" "$base_ref" 1>&2
+branch_prefix="$(git -C "$repo" config --default=findepi/ --get findepi.private-branch-prefix)"
+git -C "$repo" worktree add -b "${branch_prefix}${worktree_name}" "$worktree_path" "$base_ref" 1>&2
 
 # Step B — our custom step: isolate the Maven local repo, Maven projects only.
 # Non-fatal: a failure here must NOT abort the (already done) worktree creation.
