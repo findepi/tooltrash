@@ -37,7 +37,7 @@ which fzf >/dev/null && eval "$(fzf --bash)"
 
 if [ -d ~/.jenv ] && which jenv >/dev/null; then
     export PATH="$HOME/.jenv/bin:$PATH"
-    eval "$(jenv init -)"
+    eval "$(jenv init - --no-rehash)"
 fi
 
 if which cloudvm >/dev/null; then
