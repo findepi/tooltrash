@@ -2,38 +2,64 @@
 
 set -euo pipefail
 
-branch="$(git symbolic-ref --short HEAD)"
-head="$(git rev-parse HEAD)"
+progname="$(basename "$0")"
+
+usage() {
+    echo "Usage: ${progname} [BRANCH_NAME]" >&2
+    exit 1
+}
+
+[ $# -le 1 ] || usage
+
 default_branch="$(git master)"
 
-local_commits="$(git log HEAD --not --remotes --oneline | wc -l)"
-
-if [ "${local_commits}" -eq 0 ]; then
-    # Pushed, safe to delete locally
-    set -x
-    git checkout "${default_branch}"
-    git branch -D "${branch}"
-    exit
+if [ $# -eq 1 ]; then
+    branch="$1"
+    [ -n "${branch}" ] || usage
+    if ! git show-ref --verify --quiet "refs/heads/${branch}"; then
+        echo "${progname}: Error: No such local branch: ${branch}" >&2
+        exit 1
+    fi
+    branch_given=true
+else
+    # Not --short: that abbreviates to heads/NAME when a tag shares the name
+    branch="$(git symbolic-ref HEAD)"
+    branch="${branch#refs/heads/}"
+    branch_given=false
 fi
 
-# Local branch created with github CLI `gh pr checkout` won't have a regular
-# remote, and will fetch into FETCH_HEAD
-if true &&
-    remote="$(git config "branch.${branch}.remote")" &&
-    remote_branch="$(git config "branch.${branch}.merge")" &&
-    git fetch "${remote}" "${remote_branch}"; then
-    local_commits="$(git log FETCH_HEAD..HEAD --oneline | wc -l)"
-    if [ "${local_commits}" -eq 0 ]; then
-        # Pushed, safe to delete locally
-        set -x
-        git checkout "${default_branch}"
-        git branch -D "${branch}"
-        exit
+if [ "${branch}" == "${default_branch}" ]; then
+    echo "${progname}: Error: Refusing to delete the default branch ${default_branch}." >&2
+    exit 1
+fi
+
+local_commits="$(git log "refs/heads/${branch}" --not --remotes --oneline | wc -l)"
+
+if [ "${local_commits}" -ne 0 ]; then
+    # Local branch created with github CLI `gh pr checkout` won't have a regular
+    # remote, and will fetch into FETCH_HEAD
+    if true &&
+        remote="$(git config "branch.${branch}.remote")" &&
+        remote_branch="$(git config "branch.${branch}.merge")" &&
+        git fetch "${remote}" "${remote_branch}"; then
+        local_commits="$(git log "FETCH_HEAD..refs/heads/${branch}" --oneline | wc -l)"
     fi
 fi
 
-progname="$(basename "$0")"
-echo "${progname}: Error: Branch ${branch} does not appear to be pushed externally." >&2
-echo "${progname}: Error: Unsafe to delete. Use can delete it with:" >&2
-echo "git checkout '${default_branch}' && git branch -D '${branch}'" >&2
-exit 1
+if [ "${local_commits}" -ne 0 ]; then
+    echo "${progname}: Error: Branch ${branch} does not appear to be pushed externally." >&2
+    echo "${progname}: Error: Unsafe to delete. You can delete it with:" >&2
+    if ${branch_given}; then
+        echo "git branch -D '${branch}'" >&2
+    else
+        echo "git checkout '${default_branch}' && git branch -D '${branch}'" >&2
+    fi
+    exit 1
+fi
+
+# Pushed, safe to delete locally
+if ! ${branch_given}; then
+    # Cannot delete the branch we are standing on
+    (set -x; git checkout "${default_branch}")
+fi
+(set -x; git branch -D "${branch}")
