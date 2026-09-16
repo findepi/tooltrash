@@ -11,6 +11,7 @@
 
 # maven
 dependency-reduced-pom.xml
+.mvn-repo/
 
 # Tempto (https://github.com/trinodb/tempto)'s configuration file.
 # Name per convention as used in Trino (https://github.com/trinodb/trino).
