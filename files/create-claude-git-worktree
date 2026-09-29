@@ -33,9 +33,17 @@ here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo="${CLAUDE_PROJECT_DIR:-$PWD}"
 
 payload="$(cat)"
+# currently never set by Claude, default used
 worktree_path="$(jq -r '.worktree_path // empty' <<<"$payload")"
 worktree_name="$(jq -r '.worktree_name // .name // "worktree"' <<<"$payload")"
-base_ref="$(jq -r '.base_ref // "HEAD"' <<<"$payload")"
+# currently never set by Claude, default used
+base_ref="$(jq -r '.base_ref // empty' <<<"$payload")"
+
+# Default to the upstream master, not the main checkout's HEAD, which usually sits on a WIP
+# branch. Fall back to HEAD when master has no upstream.
+if [ -z "$base_ref" ]; then
+  base_ref="$(git -C "$repo" rev-parse --verify --quiet "$(git -C "$repo" master)@{u}" || echo HEAD)"
+fi
 
 # Fallback if the payload lacks a path (field-name drift): reproduce the documented default.
 [ -n "$worktree_path" ] || worktree_path="$repo/.claude/worktrees/$worktree_name"
