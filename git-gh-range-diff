@@ -3,8 +3,11 @@
 set -euo pipefail
 
 re='^(https://github\.com/[^/]+/[^/]+)/compare/([0-9a-f]+)\.\.\.?([0-9a-f]+)$'
-[[ $# -eq 1 && $1 =~ $re ]] || { echo "usage: $0 https://github.com/<org>/<repo>/compare/<sha1>..<sha2>" >&2; exit 1; }
+[[ $# -eq 1 && $1 =~ ${re} ]] || { echo "usage: $0 https://github.com/<org>/<repo>/compare/<sha1>..<sha2>" >&2; exit 1; }
 repo=${BASH_REMATCH[1]} first=${BASH_REMATCH[2]} second=${BASH_REMATCH[3]}
 
-+ git fetch -q "$repo" "$first" "$second"
-exec + git range-diff "$first...$second"
++ git fetch -q "${repo}" HEAD "${first}" "${second}"
+master=$(git rev-parse FETCH_HEAD)   # first fetched ref = repo's default branch
+exec + git range-diff \
+    "$(git merge-base "${master}" "${first}")..${first}" \
+    "$(git merge-base "${master}" "${second}")..${second}"
