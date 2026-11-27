@@ -1,0 +1,19 @@
+# Readable highlight colors (explicit 256-color values, independent of the terminal palette)
+# selected line: white on dark blue
+color cursor        color231 color24  bold
+# status bar of the active pane
+color title-focus   color231 color25  bold
+# status bar of the inactive pane
+color title-blur    color250 color237
+# bottom message line
+color status        default  default
+# search hits: black on yellow
+color search-result color16  color220
+
+# Arrow keys scroll the diff instead of moving the commit selection in the main view
+bind diff  <Up>   move-up
+bind diff  <Down> move-down
+bind pager <Up>   move-up
+bind pager <Down> move-down
+bind stage <Up>   move-up
+bind stage <Down> move-down
